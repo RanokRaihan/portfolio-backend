@@ -40,26 +40,6 @@ class QueryBuilder<T> {
       }
     });
 
-    const minPrice = this.query.minPrice;
-    const maxPrice = this.query.maxPrice;
-    // console.log({ minPrice, maxPrice });
-    if (minPrice || maxPrice) {
-      this.modelQuery = this.modelQuery.find({
-        salePrice: {
-          ...(minPrice && { $gte: Number(minPrice) }),
-          ...(maxPrice && { $lte: Number(maxPrice) }),
-        },
-      });
-    }
-
-    const inStock = this.query.inStock;
-    if (inStock !== undefined) {
-      this.modelQuery = this.modelQuery.find({
-        inStock:
-          inStock === "true" ? true : inStock === "false" ? false : undefined,
-      });
-    }
-
     return this;
   }
 

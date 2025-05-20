@@ -22,8 +22,9 @@ const skillSchema = new Schema<ISkill>(
     proficiencyLevel: {
       type: String,
       enum: ["beginner", "intermediate", "advanced", "expert"],
+      default: "beginner",
     },
-    yearsOfExperience: { type: Number },
+    yearsOfExperience: { type: Number, required: true },
     featured: { type: Boolean, default: false },
   },
   {

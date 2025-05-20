@@ -20,7 +20,10 @@ export const skillValidationSchema = z.object({
       proficiencyLevel: z
         .enum(["beginner", "intermediate", "advanced", "expert"])
         .default("beginner"),
-      yearsOfExperience: z.number().optional(),
+      yearsOfExperience: z.preprocess(
+        (val) => (typeof val === "string" ? Number(val) : val),
+        z.number()
+      ),
       featured: z.boolean().default(false),
     })
     .strict(),

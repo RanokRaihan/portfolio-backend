@@ -1,4 +1,3 @@
-import QueryBuilder from "../../builder/queryBuilder";
 import { ISkill } from "./skill.interface";
 import Skill from "./skill.model";
 
@@ -13,17 +12,9 @@ export const getAllSkillsService = async (query: Record<string, unknown>) => {
   const searchableFields = ["name", "description", "category"];
   const filterableFields = ["category", "featured", "proficiencyLevel"];
 
-  const skillQuery = new QueryBuilder(Skill.find(), query)
-    .search(searchableFields)
-    .filter(filterableFields)
-    .sort()
-    .paginate();
-
-  const result = await skillQuery.modelQuery;
-  const meta = await skillQuery.countTotal();
+  const result = await Skill.find();
 
   return {
-    meta,
     data: result,
   };
 };

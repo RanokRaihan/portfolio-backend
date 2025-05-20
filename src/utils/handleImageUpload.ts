@@ -20,7 +20,10 @@ export const uploadToCloudinary = (
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       path,
-      { public_id: imageName.trim(), folder: "portfolio" },
+      {
+        public_id: imageName.trim().substring(0, imageName.lastIndexOf(".")),
+        folder: "portfolio-image",
+      },
       function (error, result) {
         if (error) {
           reject(error);
@@ -31,7 +34,7 @@ export const uploadToCloudinary = (
           if (err) {
             console.log(err);
           } else {
-            console.log("File is deleted.");
+            console.log("File deleted successfully", path);
           }
         });
       }

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { auth } from "../../middleware/auth.middleware";
 import { authorize } from "../../middleware/authorize.middleware";
 import validateRequest from "../../middleware/validateRequest";
+import { upload } from "../../utils/handleImageUpload";
 import {
   createSkillController,
   getAllSkillsController,
@@ -22,9 +23,10 @@ router.get("/:id", getSkillByIdController);
 
 // Protected routes - only accessible to authenticated users
 router.post(
-  "/",
+  "/add",
   auth,
   authorize(["admin"]),
+  upload.single("image"),
   validateRequest(skillValidationSchema),
   createSkillController
 );
