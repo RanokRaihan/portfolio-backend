@@ -31,9 +31,6 @@ router.post(
   createSkillController
 );
 
-//get all skills
-router.get("/", getAllSkillsController);
-
 router.patch(
   "/:id",
   auth,

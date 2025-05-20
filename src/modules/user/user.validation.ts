@@ -17,11 +17,3 @@ export const createUserSchema = z.object({
     })
     .strict(),
 });
-
-export const updateUserSchema = z.object({
-  body: z
-    .object({
-      id: z.string(),
-    })
-    .strict(),
-});
