@@ -15,7 +15,7 @@ import {
 // Create a new project
 export const addProjectController = asyncHandler(
   async (req: Request, res: Response) => {
-    console.log(req.files);
+    // console.log(req.files);
     // Check if thumbnail is provided
     if (!req.files || !("thumbnail" in req.files)) {
       throw new ApiError(400, "Project thumbnail is required", "thumbnail");
@@ -57,7 +57,7 @@ export const addProjectController = asyncHandler(
     if (typeof keyFeatures === "string") {
       keyFeatures = JSON.parse(keyFeatures);
     }
-    console.log(req.body);
+    // console.log(req.body);
     // Create payload for service
     const payload = {
       ...req.body,
@@ -69,7 +69,7 @@ export const addProjectController = asyncHandler(
       isFeatured:
         req.body.isFeatured === "true" || req.body.isFeatured === true,
     };
-    console.log(payload);
+    // console.log(payload);
     const result = await createProjectService(payload);
     sendResponse(res, 201, "Project created successfully", result);
   }

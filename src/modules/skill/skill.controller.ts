@@ -20,8 +20,8 @@ export const createSkillController = asyncHandler(
     if (!req.file) {
       throw new ApiError(400, "Skill image is required");
     }
-    console.log("req.file", req.file);
-    console.log("req.body", req.body);
+    // console.log("req.file", req.file);
+    // console.log("req.body", req.body);
 
     // Assuming you have a cloudinaryUpload utility function
     const { secure_url } = await uploadToCloudinary(
@@ -42,7 +42,7 @@ export const createSkillController = asyncHandler(
 // Get all skills
 export const getAllSkillsController = asyncHandler(
   async (req: Request, res: Response) => {
-    console.log("working");
+    // console.log("working");
     const result = await getAllSkillsService(req.query);
     sendResponse(res, 200, "Skills retrieved successfully", result.data);
   }
@@ -52,7 +52,7 @@ export const getAllSkillsController = asyncHandler(
 export const getAllSkillsWithFilterController = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await getAllSkillsWithFilterService(req.query);
-    console.log("result", result);
+    // console.log("result", result);
     sendResponse(
       res,
       200,

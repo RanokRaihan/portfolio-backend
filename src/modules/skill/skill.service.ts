@@ -36,7 +36,7 @@ export const getAllSkillsWithFilterService = async (
 
   const result = await queryBuilder.modelQuery;
   const meta = await queryBuilder.countTotal();
-  console.log({ meta });
+  // console.log({ meta });
   return {
     data: result,
     meta,
