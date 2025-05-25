@@ -1,8 +1,11 @@
 import cors from "cors";
+import dotenv from "dotenv";
 import express, { Application } from "express";
 import { globalErrorHandler } from "./errors/globalErrorHandler";
 import notFound from "./middleware/notFound";
 import router from "./routes";
+// Configuring dotenv to load environment variables from .env file
+dotenv.config();
 // Create Express server
 const app: Application = express();
 
@@ -14,8 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
-      "https://bike-store-three-chi.vercel.app",
+      "http://localhost:3000",
+      "https://portfolio-dashboard-blue.vercel.app",
     ],
     credentials: true,
   })
