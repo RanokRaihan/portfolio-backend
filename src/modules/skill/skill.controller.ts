@@ -7,6 +7,7 @@ import {
   createSkillService,
   deleteSkillService,
   getAllSkillsService,
+  getAllSkillsWithFilterService,
   getFeaturedSkillsService,
   getSkillByIdService,
   getSkillsByCategoryService,
@@ -47,6 +48,20 @@ export const getAllSkillsController = asyncHandler(
   }
 );
 
+// // Get all skills with pagination
+export const getAllSkillsWithFilterController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await getAllSkillsWithFilterService(req.query);
+    console.log("result", result);
+    sendResponse(
+      res,
+      200,
+      "Skills retrieved successfully",
+      result.data,
+      result.meta
+    );
+  }
+);
 // Get a single skill by ID
 export const getSkillByIdController = asyncHandler(
   async (req: Request, res: Response) => {

@@ -46,7 +46,7 @@ class QueryBuilder<T> {
   // Applies pagination based on query parameters.
   paginate() {
     const page = parseInt(this?.query?.page, 10) || 1;
-    const limit = parseInt(this?.query?.limit, 10) || 6;
+    const limit = parseInt(this?.query?.limit, 10) || 10;
     const skip = (page - 1) * limit;
 
     this.modelQuery = this.modelQuery.skip(skip).limit(limit);
@@ -57,7 +57,7 @@ class QueryBuilder<T> {
     const totalQueries = this.modelQuery.getFilter();
     const total = await this.modelQuery.model.countDocuments(totalQueries);
     const page = Number(this?.query?.page) || 1;
-    const limit = Number(this?.query?.limit) || 6;
+    const limit = Number(this?.query?.limit) || 10;
     const totalPage = Math.ceil(total / limit);
 
     return {
