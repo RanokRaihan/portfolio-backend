@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { auth } from "../../middleware/auth.middleware";
 import { authorize } from "../../middleware/authorize.middleware";
+import bodyParser from "../../middleware/bodyParser.middleware";
 import validateRequest from "../../middleware/validateRequest";
 import { upload } from "../../utils/handleImageUpload";
 import {
@@ -33,6 +34,7 @@ blogRouter.post(
     { name: "thumbnail", maxCount: 1 },
     { name: "images", maxCount: 5 },
   ]),
+  bodyParser,
   validateRequest(blogValidation),
   createBlogController
 );

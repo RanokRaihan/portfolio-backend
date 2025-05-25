@@ -1,3 +1,5 @@
+import QueryBuilder from "../../builder/queryBuilder";
+import { IMeta } from "../../interface/global.interface";
 import { ISkill } from "./skill.interface";
 import Skill from "./skill.model";
 
@@ -19,6 +21,27 @@ export const getAllSkillsService = async (query: Record<string, unknown>) => {
   };
 };
 
+// Get all skills with filtering and pagination
+export const getAllSkillsWithFilterService = async (
+  query: Record<string, unknown>
+): Promise<{ data: ISkill[]; meta: IMeta }> => {
+  const searchableFields = ["name", "description", "category"];
+  const filterableFields = ["category", "featured", "proficiencyLevel"];
+
+  const queryBuilder = new QueryBuilder(Skill.find(), query)
+    .search(searchableFields)
+    .filter(filterableFields)
+    .sort()
+    .paginate();
+
+  const result = await queryBuilder.modelQuery;
+  const meta = await queryBuilder.countTotal();
+  console.log({ meta });
+  return {
+    data: result,
+    meta,
+  };
+};
 // Get a single skill by ID
 export const getSkillByIdService = async (
   id: string

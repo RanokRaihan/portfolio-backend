@@ -79,6 +79,7 @@ export const addProjectController = asyncHandler(
 export const getAllProjectsController = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await getAllProjectsService(req.query);
+
     sendResponse(
       res,
       200,

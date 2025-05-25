@@ -4,13 +4,13 @@ export interface IBlog {
   summary: string;
   content: string;
   thumbnail: string;
-  images?: string[];
   category: string;
   tags: string[];
   author?: string;
   readTime?: number;
   isFeatured?: boolean;
   status: "draft" | "published";
+  images?: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }
