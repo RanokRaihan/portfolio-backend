@@ -151,10 +151,6 @@ npm run dev
 └── tsconfig.json
 ```
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Author
 
 Ranok Raihan - [GitHub](https://github.com/ranokraihan)
