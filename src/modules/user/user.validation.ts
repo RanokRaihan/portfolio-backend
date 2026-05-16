@@ -8,7 +8,7 @@ export const createUserSchema = z.object({
       }),
       password: z
         .string()
-        .min(6, { message: "password must be at least 6 characters!" })
+        .min(8, { message: "password must be at least 8 characters!" })
         .max(20, { message: "password must be at most 20 characters!" }),
       name: z
         .string()

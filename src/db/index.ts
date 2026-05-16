@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import { db_name, mongodb_uri } from "../config";
+import { config } from "../config";
 
 let isConnected = false;
 
 export const connectDB = async () => {
   if (isConnected) return;
   try {
-    await mongoose.connect(`${mongodb_uri}/${db_name}`);
+    await mongoose.connect(`${config.db.uri}/${config.db.name}`);
     isConnected = true;
     console.log("mongodb connected successfully");
   } catch (error) {

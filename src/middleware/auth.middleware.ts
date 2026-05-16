@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { jwt_access_secret } from "../config";
+import { config } from "../config";
 import ApiError from "../errors/ApiError";
 import { IjwtPayload } from "../modules/auth/auth.interface";
 import { findUserWithEmailService } from "../modules/user/user.service";
@@ -16,7 +16,7 @@ export const auth = asyncHandler(
     let decoded: IjwtPayload;
     // verify token
     try {
-      decoded = jwt.verify(token, jwt_access_secret as string) as IjwtPayload;
+      decoded = jwt.verify(token, config.jwt.accessSecret as string) as IjwtPayload;
     } catch (error) {
       throw new ApiError(401, "you are not authorized");
     }
