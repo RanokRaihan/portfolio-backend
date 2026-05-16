@@ -9,6 +9,10 @@ import { sendResponse } from "../../utils/sendResponse";
 import { findUserWithEmailService } from "../user/user.service";
 import { SignOptions } from "./../../../node_modules/@types/jsonwebtoken/index.d";
 import { IjwtPayload, TUserRole } from "./auth.interface";
+import {
+  sendVerificationEmailService,
+  verifyEmailService,
+} from "./auth.service";
 
 export const loginUserController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -52,8 +56,11 @@ export const loginUserController = asyncHandler(
       path: "/",
     });
 
-    // send the token as response
-    sendResponse(res, 200, "Login successful", { accessToken, refreshToken });
+    sendResponse(res, 200, "Login successful", {
+      accessToken,
+      refreshToken,
+      needPasswordChange: user.needPasswordChange ?? false,
+    });
   },
 );
 
@@ -69,6 +76,7 @@ export const changePasswordController = asyncHandler(
       throw new ApiError(401, "Invalid credentials", "changePassword");
     }
     user.password = newPassword;
+    user.needPasswordChange = false;
     await user.save();
     sendResponse(res, 200, "Password changed successfully", null);
   },
@@ -78,6 +86,27 @@ export const logoutUserController = asyncHandler(
   async (req: Request, res: Response) => {
     res.clearCookie("refreshToken");
     sendResponse(res, 200, "Logged out successfully", null);
+  },
+);
+
+export const sendVerificationEmailController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user;
+    console.log(user);
+    if (!user) {
+      throw new ApiError(401, "Unauthorized", "sendVerificationEmail");
+    }
+    const { email } = req.body;
+    await sendVerificationEmailService(email, user._id);
+    sendResponse(res, 200, "Verification email sent successfully", null);
+  },
+);
+
+export const verifyEmailController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { token } = req.body;
+    await verifyEmailService(token);
+    sendResponse(res, 200, "Email verified successfully", null);
   },
 );
 

@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { model, Schema } from "mongoose";
-import { IUser } from "./user.interface";
+import { IUser, UserRole } from "./user.interface";
+
 const userSchema = new Schema<IUser>(
   {
     name: {
@@ -29,16 +30,62 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
     },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetTokenExpires: {
+      type: Date,
+    },
+    image: {
+      type: String,
+    },
+    dateOfBirth: {
+      required: true,
+      type: Date,
+    },
+    gender: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: ["male", "female", "other"],
+    },
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     role: {
       type: String,
-      default: "moderator",
-      enum: ["moderator", "admin"],
+      default: UserRole.MODERATOR,
+      enum: Object.values(UserRole),
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: {
+      type: String,
+    },
+    emailVerificationTokenExpires: {
+      type: Date,
+    },
+    emailVerifiedAt: {
+      type: Date,
+    },
+    needPasswordChange: {
+      type: Boolean,
+      default: true,
     },
     isActive: {
       type: Boolean,
       default: true,
     },
-    emailVerified: {
+    isDeleted: {
       type: Boolean,
       default: false,
     },
@@ -49,11 +96,9 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-//hash the password before saving the user
 userSchema.pre("save", async function (next) {
   const user = this;
   if (user.isModified("password")) {
-    // hash the password
     user.password = await bcrypt.hash(user.password, 8);
   }
   next();
@@ -63,6 +108,7 @@ userSchema.post("save", function (doc, next) {
   doc.password = "";
   next();
 });
+
 const User = model<IUser>("User", userSchema);
 
 export default User;

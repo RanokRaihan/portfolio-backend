@@ -1,9 +1,22 @@
+import crypto from "crypto";
+import { Resend } from "resend";
 import { config } from "../../config";
 import ApiError from "../../errors/ApiError";
 import QueryBuilder from "../../builder/queryBuilder";
 import { IMeta } from "../../interface/global.interface";
+import { welcomeEmailTemplate } from "../../utils/emailTemplates";
 import { IUser } from "./user.interface";
 import User from "./user.model";
+
+const resend = new Resend(config.resend.apiKey);
+
+const generateTemporaryPassword = (): string => {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return Array.from(crypto.randomBytes(10))
+    .map((b) => chars[b % chars.length])
+    .join("");
+};
 
 export const findUserWithEmailService = async (email: string) => {
   try {
@@ -33,35 +46,73 @@ export const getAllUsersService = async (
   return { data, meta };
 };
 
-export const seedSuperAdminService = async () => {
-  const { name, email, password } = config.superAdmin;
-  if (!name || !email || !password) {
+export const seedSuperAdminService = async (data: IUser) => {
+  const existing = await User.findOne({ role: "admin" });
+  if (existing) {
+    throw new ApiError(409, "Admin already exists", "seedSuperAdmin");
+  }
+
+  const emailTaken = await User.findOne({ email: data.email });
+  if (emailTaken) {
+    throw new ApiError(409, "Email is already in use", "seedSuperAdmin");
+  }
+
+  const user = await User.create({ ...data, role: "admin" });
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    dateOfBirth: user.dateOfBirth,
+    gender: user.gender,
+    address: user.address,
+    phone: user.phone,
+    role: user.role,
+  };
+};
+
+export const createUserService = async (
+  data: Omit<IUser, "password" | "role">,
+) => {
+  const temporaryPassword = generateTemporaryPassword();
+
+  const user = await User.create({
+    ...data,
+    password: temporaryPassword,
+    needPasswordChange: true,
+  });
+
+  const loginUrl = `${config.resetPassUiLink}/login`;
+  const html = welcomeEmailTemplate(
+    user.name,
+    user.email,
+    temporaryPassword,
+    loginUrl,
+  );
+
+  const { error } = await resend.emails.send({
+    from: config.resend.fromEmail,
+    to: user.email,
+    subject: "Your account has been created — login details inside",
+    html,
+  });
+
+  if (error) {
+    await User.findByIdAndDelete(user._id);
     throw new ApiError(
       500,
-      "Super admin credentials are not configured. Set SUPER_ADMIN_NAME, SUPER_ADMIN_EMAIL, SUPER_ADMIN_PASSWORD in .env",
-      "seedSuperAdmin",
+      "Failed to send welcome email. User creation rolled back.",
+      "userCreation",
     );
   }
 
-  const existing = await User.findOne({ role: "admin" });
-  if (existing) {
-    throw new ApiError(409, " admin already exists", "seedSuperAdmin");
-  }
-
-  const user = await User.create({ name, email, password, role: "admin" });
-  return { _id: user._id, name: user.name, email: user.email, role: user.role };
-};
-
-//create a user with the given data
-export const createUserService = async (data: IUser) => {
-  try {
-    const user = await User.create(data);
-    if (!user?._id) {
-      throw new ApiError(500, "Failed to create user", "userCreation");
-    }
-    return user;
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw new ApiError(500, "Failed to create user", "userCreation");
-  }
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    dateOfBirth: user.dateOfBirth,
+    gender: user.gender,
+    address: user.address,
+    phone: user.phone,
+    role: user.role,
+  };
 };

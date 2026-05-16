@@ -11,12 +11,14 @@ const requiredEnvVars = [
   "CLOUDINARY_CLOUD_NAME",
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
+  "RESEND_API_KEY",
+  "RESEND_FROM_EMAIL",
 ] as const;
 
 const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key]);
 if (missingEnvVars.length > 0) {
   throw new Error(
-    `Missing required environment variables: ${missingEnvVars.join(", ")}`
+    `Missing required environment variables: ${missingEnvVars.join(", ")}`,
   );
 }
 
@@ -42,17 +44,20 @@ type TConfig = {
     apiKey: string;
     apiSecret: string;
   };
-  shurjoPay: {
-    endpoint: string;
-    username: string;
-    password: string;
-    prefix: string;
-    returnUrl: string;
+
+  resend: {
+    apiKey: string;
+    fromEmail: string;
   };
+
   superAdmin: {
     name: string;
     email: string;
     password: string;
+  };
+  appUrl: {
+    frontendUrl: string;
+    backendUrl: string;
   };
 };
 
@@ -78,16 +83,18 @@ export const config: TConfig = {
     apiKey: process.env.CLOUDINARY_API_KEY || "",
     apiSecret: process.env.CLOUDINARY_API_SECRET || "",
   },
-  shurjoPay: {
-    endpoint: process.env.SP_ENDPOINT || "",
-    username: process.env.SP_USERNAME || "",
-    password: process.env.SP_PASSWORD || "",
-    prefix: process.env.SP_PREFIX || "",
-    returnUrl: process.env.SP_RETURN_URL || "",
-  },
+
   superAdmin: {
     name: process.env.SUPER_ADMIN_NAME || "",
     email: process.env.SUPER_ADMIN_EMAIL || "",
     password: process.env.SUPER_ADMIN_PASSWORD || "",
+  },
+  resend: {
+    apiKey: process.env.RESEND_API_KEY || "",
+    fromEmail: process.env.RESEND_FROM_EMAIL || "",
+  },
+  appUrl: {
+    frontendUrl: process.env.FRONTEND_URL || "",
+    backendUrl: process.env.BACKEND_URL || "",
   },
 };

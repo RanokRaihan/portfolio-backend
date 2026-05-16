@@ -20,7 +20,11 @@ userRouter.get(
   getAllUsersController,
 );
 
-userRouter.post("/seed-super-admin", seedSuperAdminController);
+userRouter.post(
+  "/seed-super-admin",
+  validateRequest(createUserSchema),
+  seedSuperAdminController,
+);
 
 userRouter.post(
   "/create-user",

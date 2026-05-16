@@ -13,10 +13,14 @@ export const auth = asyncHandler(
     if (!token) {
       throw new ApiError(401, "you are not authorized!");
     }
+    console.log("Token from header:", token);
     let decoded: IjwtPayload;
     // verify token
     try {
-      decoded = jwt.verify(token, config.jwt.accessSecret as string) as IjwtPayload;
+      decoded = jwt.verify(
+        token,
+        config.jwt.accessSecret as string,
+      ) as IjwtPayload;
     } catch (error) {
       throw new ApiError(401, "you are not authorized");
     }
@@ -33,5 +37,5 @@ export const auth = asyncHandler(
     }
     req.user = decoded as IjwtPayload;
     next();
-  }
+  },
 );

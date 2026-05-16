@@ -19,6 +19,8 @@ export interface IUser {
   emailVerificationTokenExpires?: Date;
   emailVerifiedAt?: Date;
   needPasswordChange?: boolean;
+  passwordResetToken?: string;
+  passwordResetTokenExpires?: Date;
   isActive?: boolean;
   isDeleted?: boolean;
   createdAt?: Date;
