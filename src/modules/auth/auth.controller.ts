@@ -10,6 +10,8 @@ import { findUserWithEmailService } from "../user/user.service";
 import { SignOptions } from "./../../../node_modules/@types/jsonwebtoken/index.d";
 import { IjwtPayload, TUserRole } from "./auth.interface";
 import {
+  forgotPasswordService,
+  resetPasswordService,
   sendVerificationEmailService,
   verifyEmailService,
 } from "./auth.service";
@@ -107,6 +109,22 @@ export const verifyEmailController = asyncHandler(
     const { token } = req.body;
     await verifyEmailService(token);
     sendResponse(res, 200, "Email verified successfully", null);
+  },
+);
+
+export const forgotPasswordController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email } = req.body;
+    await forgotPasswordService(email);
+    sendResponse(res, 200, "Password reset email sent successfully", null);
+  },
+);
+
+export const resetPasswordController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { token, newPassword } = req.body;
+    await resetPasswordService(token, newPassword);
+    sendResponse(res, 200, "Password reset successfully", null);
   },
 );
 

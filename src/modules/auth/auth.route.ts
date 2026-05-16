@@ -3,15 +3,19 @@ import { auth } from "../../middleware/auth.middleware";
 import validateRequest from "../../middleware/validateRequest";
 import {
   changePasswordController,
+  forgotPasswordController,
   loginUserController,
   logoutUserController,
   refreshTokenController,
+  resetPasswordController,
   sendVerificationEmailController,
   verifyEmailController,
 } from "./auth.controller";
 import {
   changePasswordSchema,
+  forgotPasswordSchema,
   loginValidationSchema,
+  resetPasswordSchema,
   sendVerificationEmailSchema,
   verifyEmailSchema,
 } from "./auth.validation";
@@ -38,9 +42,18 @@ authRouter.post(
 );
 authRouter.post(
   "/verify-email",
-
   validateRequest(verifyEmailSchema),
   verifyEmailController,
+);
+authRouter.post(
+  "/forgot-password",
+  validateRequest(forgotPasswordSchema),
+  forgotPasswordController,
+);
+authRouter.post(
+  "/reset-password",
+  validateRequest(resetPasswordSchema),
+  resetPasswordController,
 );
 
 export default authRouter;
