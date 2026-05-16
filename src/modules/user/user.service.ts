@@ -70,6 +70,36 @@ export const seedSuperAdminService = async (data: IUser) => {
   };
 };
 
+export const updateAvatarService = async (userId: string, image: string) => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { image },
+    { new: true, runValidators: true },
+  ).select("_id name email image");
+
+  if (!user) {
+    throw new ApiError(404, "User not found", "updateAvatar");
+  }
+
+  return user;
+};
+
+export const updateUserService = async (
+  userId: string,
+  data: Partial<Pick<IUser, "name" | "dateOfBirth" | "gender" | "address" | "phone">>,
+) => {
+  const user = await User.findByIdAndUpdate(userId, data, {
+    new: true,
+    runValidators: true,
+  }).select("_id name email dateOfBirth gender address phone role");
+
+  if (!user) {
+    throw new ApiError(404, "User not found", "updateUser");
+  }
+
+  return user;
+};
+
 export const createUserService = async (
   data: Omit<IUser, "password" | "role">,
 ) => {

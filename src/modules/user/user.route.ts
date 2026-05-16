@@ -6,8 +6,14 @@ import {
   createUserController,
   getAllUsersController,
   seedSuperAdminController,
+  updateAvatarController,
+  updateUserController,
 } from "./user.controller";
-import { createUserSchema } from "./user.validation";
+import {
+  createUserSchema,
+  updateAvatarSchema,
+  updateUserSchema,
+} from "./user.validation";
 
 const userRouter = Router();
 
@@ -32,6 +38,20 @@ userRouter.post(
   authorize(["admin"]),
   validateRequest(createUserSchema),
   createUserController,
+);
+
+userRouter.patch(
+  "/me",
+  auth,
+  validateRequest(updateUserSchema),
+  updateUserController,
+);
+
+userRouter.patch(
+  "/me/avatar",
+  auth,
+  validateRequest(updateAvatarSchema),
+  updateAvatarController,
 );
 
 export default userRouter;
