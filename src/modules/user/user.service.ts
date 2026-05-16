@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import { Resend } from "resend";
+import QueryBuilder from "../../builder/queryBuilder";
 import { config } from "../../config";
 import ApiError from "../../errors/ApiError";
-import QueryBuilder from "../../builder/queryBuilder";
 import { IMeta } from "../../interface/global.interface";
 import { welcomeEmailTemplate } from "../../utils/emailTemplates";
 import { IUser } from "./user.interface";
@@ -69,11 +69,9 @@ export const updateUserStatusService = async (
 };
 
 export const updateUserRoleService = async (id: string, role: string) => {
-  const user = await User.findByIdAndUpdate(
-    id,
-    { role },
-    { new: true },
-  ).select("_id name email role isActive");
+  const user = await User.findByIdAndUpdate(id, { role }, { new: true }).select(
+    "_id name email role isActive",
+  );
   if (!user) {
     throw new ApiError(404, "User not found", "updateUserRole");
   }
@@ -93,7 +91,7 @@ export const deleteUserService = async (id: string) => {
 };
 
 export const getAllUsersService = async (
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
 ): Promise<{ data: unknown[]; meta: IMeta }> => {
   const queryBuilder = new QueryBuilder(User.find(), query)
     .search(["name", "email"])
@@ -146,7 +144,9 @@ export const updateAvatarService = async (userId: string, image: string) => {
 
 export const updateUserService = async (
   userId: string,
-  data: Partial<Pick<IUser, "name" | "dateOfBirth" | "gender" | "address" | "phone">>,
+  data: Partial<
+    Pick<IUser, "name" | "dateOfBirth" | "gender" | "address" | "phone">
+  >,
 ) => {
   const user = await User.findByIdAndUpdate(userId, data, {
     new: true,
@@ -171,7 +171,7 @@ export const createUserService = async (
     needPasswordChange: true,
   });
 
-  const loginUrl = `${config.resetPassUiLink}/login`;
+  const loginUrl = `${config.appUrl.frontendUrl}/login`;
   const html = welcomeEmailTemplate(
     user.name,
     user.email,

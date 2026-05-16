@@ -8,9 +8,6 @@ const requiredEnvVars = [
   "DB_NAME",
   "JWT_ACCESS_SECRET",
   "JWT_REFRESH_SECRET",
-  "CLOUDINARY_CLOUD_NAME",
-  "CLOUDINARY_API_KEY",
-  "CLOUDINARY_API_SECRET",
   "RESEND_API_KEY",
   "RESEND_FROM_EMAIL",
 ] as const;
@@ -39,12 +36,6 @@ type TConfig = {
     saltRounds: string;
   };
   resetPassUiLink: string;
-  cloudinary: {
-    cloudName: string;
-    apiKey: string;
-    apiSecret: string;
-  };
-
   resend: {
     apiKey: string;
     fromEmail: string;
@@ -78,12 +69,6 @@ export const config: TConfig = {
     saltRounds: process.env.BCRYPT_SALT_ROUNDS || "10",
   },
   resetPassUiLink: process.env.RESET_PASS_UI_LINK || "",
-  cloudinary: {
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME || "",
-    apiKey: process.env.CLOUDINARY_API_KEY || "",
-    apiSecret: process.env.CLOUDINARY_API_SECRET || "",
-  },
-
   superAdmin: {
     name: process.env.SUPER_ADMIN_NAME || "",
     email: process.env.SUPER_ADMIN_EMAIL || "",
