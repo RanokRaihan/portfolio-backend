@@ -13,9 +13,9 @@ import { IjwtPayload, TUserRole } from "./auth.interface";
 export const loginUserController = asyncHandler(
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
-
     // check the email and password
     const user = await findUserWithEmailService(email);
+
     // if not valid, throw error
     if (!user) {
       throw new ApiError(401, "Invalid credentials", "login");
@@ -53,7 +53,7 @@ export const loginUserController = asyncHandler(
     });
 
     // send the token as response
-    sendResponse(res, 200, "Login successful", { accessToken });
+    sendResponse(res, 200, "Login successful", { accessToken, refreshToken });
   },
 );
 
@@ -105,6 +105,20 @@ export const refreshTokenController = asyncHandler(
       config.jwt.accessSecret as string,
       config.jwt.accessExpiresIn as SignOptions["expiresIn"],
     );
-    sendResponse(res, 200, "Token refreshed", { accessToken });
+    const newRefreshToken = createToken(
+      payload,
+      config.jwt.refreshSecret as string,
+      config.jwt.refreshExpiresIn as SignOptions["expiresIn"],
+    );
+    res.cookie("refreshToken", newRefreshToken, {
+      secure: config.nodeEnv === "production",
+      httpOnly: true,
+      sameSite: config.nodeEnv === "production" ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 24 * 365,
+    });
+    sendResponse(res, 200, "Token refreshed", {
+      accessToken,
+      refreshToken: newRefreshToken,
+    });
   },
 );

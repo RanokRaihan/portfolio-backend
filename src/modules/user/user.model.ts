@@ -38,11 +38,15 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: true,
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
 //hash the password before saving the user

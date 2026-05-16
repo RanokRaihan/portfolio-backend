@@ -49,6 +49,11 @@ type TConfig = {
     prefix: string;
     returnUrl: string;
   };
+  superAdmin: {
+    name: string;
+    email: string;
+    password: string;
+  };
 };
 
 export const config: TConfig = {
@@ -79,5 +84,10 @@ export const config: TConfig = {
     password: process.env.SP_PASSWORD || "",
     prefix: process.env.SP_PREFIX || "",
     returnUrl: process.env.SP_RETURN_URL || "",
+  },
+  superAdmin: {
+    name: process.env.SUPER_ADMIN_NAME || "",
+    email: process.env.SUPER_ADMIN_EMAIL || "",
+    password: process.env.SUPER_ADMIN_PASSWORD || "",
   },
 };

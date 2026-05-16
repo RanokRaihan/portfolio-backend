@@ -2,7 +2,28 @@ import { Request, Response } from "express";
 import ApiError from "../../errors/ApiError";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { sendResponse } from "../../utils/sendResponse";
-import { createUserService, findUserWithEmailService } from "./user.service";
+import {
+  createUserService,
+  findUserWithEmailService,
+  getAllUsersService,
+  seedSuperAdminService,
+} from "./user.service";
+
+export const getAllUsersController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { data, meta } = await getAllUsersService(
+      req.query as Record<string, unknown>
+    );
+    sendResponse(res, 200, "Users fetched successfully!", data, meta);
+  }
+);
+
+export const seedSuperAdminController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await seedSuperAdminService();
+    sendResponse(res, 201, "Super admin seeded successfully!", data);
+  }
+);
 
 export const createUserController = asyncHandler(
   async (req: Request, res: Response) => {
