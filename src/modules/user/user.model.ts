@@ -85,6 +85,9 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: true,
     },
+    refreshToken: {
+      type: String,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

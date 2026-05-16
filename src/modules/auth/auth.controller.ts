@@ -10,9 +10,11 @@ import { findUserWithEmailService } from "../user/user.service";
 import { SignOptions } from "./../../../node_modules/@types/jsonwebtoken/index.d";
 import { IjwtPayload, TUserRole } from "./auth.interface";
 import {
+  clearRefreshTokenService,
   forgotPasswordService,
   resetPasswordService,
   sendVerificationEmailService,
+  storeRefreshTokenService,
   verifyEmailService,
 } from "./auth.service";
 
@@ -58,6 +60,8 @@ export const loginUserController = asyncHandler(
       path: "/",
     });
 
+    await storeRefreshTokenService(user._id as string, refreshToken);
+
     sendResponse(res, 200, "Login successful", {
       accessToken,
       refreshToken,
@@ -68,10 +72,10 @@ export const loginUserController = asyncHandler(
 
 export const changePasswordController = asyncHandler(
   async (req: Request, res: Response) => {
-    const { email, oldPassword, newPassword } = req.body;
-    const user = await findUserWithEmailService(email);
+    const { oldPassword, newPassword } = req.body;
+    const user = await findUserWithEmailService(req.user.email);
     if (!user) {
-      throw new ApiError(401, "user not found", "changePassword");
+      throw new ApiError(401, "User not found", "changePassword");
     }
     const isPasswordMatched = await bcrypt.compare(oldPassword, user.password);
     if (!isPasswordMatched) {
@@ -86,6 +90,18 @@ export const changePasswordController = asyncHandler(
 
 export const logoutUserController = asyncHandler(
   async (req: Request, res: Response) => {
+    const token = req?.cookies?.refreshToken;
+    if (token) {
+      try {
+        const payload = jwt.verify(
+          token,
+          config.jwt.refreshSecret as string,
+        ) as IjwtPayload;
+        await clearRefreshTokenService(payload.email);
+      } catch {
+        // token invalid/expired — still clear the cookie
+      }
+    }
     res.clearCookie("refreshToken");
     sendResponse(res, 200, "Logged out successfully", null);
   },
@@ -93,13 +109,7 @@ export const logoutUserController = asyncHandler(
 
 export const sendVerificationEmailController = asyncHandler(
   async (req: Request, res: Response) => {
-    const user = req.user;
-    console.log(user);
-    if (!user) {
-      throw new ApiError(401, "Unauthorized", "sendVerificationEmail");
-    }
-    const { email } = req.body;
-    await sendVerificationEmailService(email, user._id);
+    await sendVerificationEmailService(req.user.email);
     sendResponse(res, 200, "Verification email sent successfully", null);
   },
 );
@@ -147,6 +157,10 @@ export const refreshTokenController = asyncHandler(
     if (!user) {
       throw new ApiError(401, "Unauthorized", "refreshToken");
     }
+    // if a stored token exists, it must match (allows sessions pre-dating this feature)
+    if (user.refreshToken && user.refreshToken !== refreshToken) {
+      throw new ApiError(401, "Session expired, please login again", "refreshToken");
+    }
     const accessToken = createToken(
       payload,
       config.jwt.accessSecret as string,
@@ -157,6 +171,7 @@ export const refreshTokenController = asyncHandler(
       config.jwt.refreshSecret as string,
       config.jwt.refreshExpiresIn as SignOptions["expiresIn"],
     );
+    await storeRefreshTokenService(user._id as string, newRefreshToken);
     res.cookie("refreshToken", newRefreshToken, {
       secure: config.nodeEnv === "production",
       httpOnly: true,

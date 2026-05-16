@@ -10,22 +10,23 @@ import User from "../user/user.model";
 
 const resend = new Resend(config.resend.apiKey);
 
-export const sendVerificationEmailService = async (
-  email: string,
+export const storeRefreshTokenService = async (
   userId: string,
+  token: string,
 ) => {
+  await User.findByIdAndUpdate(userId, { refreshToken: token });
+};
+
+export const clearRefreshTokenService = async (email: string) => {
+  await User.findOneAndUpdate({ email }, { $unset: { refreshToken: "" } });
+};
+
+export const sendVerificationEmailService = async (email: string) => {
   const user = await User.findOne({ email, isDeleted: false });
   if (!user) {
     throw new ApiError(
       404,
       "No account found with this email",
-      "sendVerificationEmail",
-    );
-  }
-  if (user._id.toString() !== userId) {
-    throw new ApiError(
-      403,
-      "You can only send verification email for your own account",
       "sendVerificationEmail",
     );
   }

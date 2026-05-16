@@ -29,15 +29,15 @@ authRouter.post(
 );
 authRouter.post("/logout", logoutUserController);
 authRouter.post("/refresh-token", refreshTokenController);
-authRouter.put(
+authRouter.patch(
   "/change-password",
+  auth,
   validateRequest(changePasswordSchema),
   changePasswordController,
 );
 authRouter.post(
   "/send-verification-email",
   auth,
-  validateRequest(sendVerificationEmailSchema),
   sendVerificationEmailController,
 );
 authRouter.post(

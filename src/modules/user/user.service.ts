@@ -20,7 +20,7 @@ const generateTemporaryPassword = (): string => {
 
 export const findUserWithEmailService = async (email: string) => {
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, isDeleted: false });
     return user;
   } catch (error) {
     console.error("Error finding user with email:", error);
@@ -32,6 +32,66 @@ export const findUserWithEmailService = async (email: string) => {
   }
 };
 
+const SAFE_USER_FIELDS =
+  "-password -refreshToken -passwordResetToken -passwordResetTokenExpires -emailVerificationToken -emailVerificationTokenExpires";
+
+export const getMeService = async (userId: string) => {
+  const user = await User.findById(userId).select(SAFE_USER_FIELDS);
+  if (!user) {
+    throw new ApiError(404, "User not found", "getMe");
+  }
+  return user;
+};
+
+export const getUserByIdService = async (id: string) => {
+  const user = await User.findOne({ _id: id, isDeleted: false }).select(
+    SAFE_USER_FIELDS,
+  );
+  if (!user) {
+    throw new ApiError(404, "User not found", "getUserById");
+  }
+  return user;
+};
+
+export const updateUserStatusService = async (
+  id: string,
+  isActive: boolean,
+) => {
+  const user = await User.findByIdAndUpdate(
+    id,
+    { isActive },
+    { new: true },
+  ).select("_id name email role isActive");
+  if (!user) {
+    throw new ApiError(404, "User not found", "updateUserStatus");
+  }
+  return user;
+};
+
+export const updateUserRoleService = async (id: string, role: string) => {
+  const user = await User.findByIdAndUpdate(
+    id,
+    { role },
+    { new: true },
+  ).select("_id name email role isActive");
+  if (!user) {
+    throw new ApiError(404, "User not found", "updateUserRole");
+  }
+  return user;
+};
+
+export const deleteUserService = async (id: string) => {
+  const user = await User.findByIdAndUpdate(
+    id,
+    { isDeleted: true, isActive: false },
+    { new: true },
+  ).select("_id name email");
+  if (!user) {
+    throw new ApiError(404, "User not found", "deleteUser");
+  }
+  return user;
+};
+
 export const getAllUsersService = async (
   query: Record<string, unknown>
 ): Promise<{ data: unknown[]; meta: IMeta }> => {
@@ -41,7 +101,7 @@ export const getAllUsersService = async (
     .sort()
     .paginate();
 
-  const data = await queryBuilder.modelQuery.select("-password");
+  const data = await queryBuilder.modelQuery.select(SAFE_USER_FIELDS);
   const meta = await queryBuilder.countTotal();
   return { data, meta };
 };

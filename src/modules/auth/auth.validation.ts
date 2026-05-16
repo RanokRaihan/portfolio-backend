@@ -15,11 +15,11 @@ export const loginValidationSchema = z.object({
 export const changePasswordSchema = z.object({
   body: z
     .object({
-      email: z
-        .string({ message: "Email is required!" })
-        .email({ message: "Invalid email format!" }),
       oldPassword: z.string({ message: "Old password is required!" }),
-      newPassword: z.string({ message: "New password is required!" }),
+      newPassword: z
+        .string({ message: "New password is required!" })
+        .min(8, { message: "Password must be at least 8 characters!" })
+        .max(20, { message: "Password must be at most 20 characters!" }),
     })
     .strict(),
 });

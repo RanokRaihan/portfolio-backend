@@ -4,12 +4,52 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { sendResponse } from "../../utils/sendResponse";
 import {
   createUserService,
+  deleteUserService,
   findUserWithEmailService,
   getAllUsersService,
+  getMeService,
+  getUserByIdService,
   seedSuperAdminService,
   updateAvatarService,
+  updateUserRoleService,
   updateUserService,
+  updateUserStatusService,
 } from "./user.service";
+
+export const getMeController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await getMeService(req.user._id);
+    sendResponse(res, 200, "Profile fetched successfully!", data);
+  },
+);
+
+export const getUserByIdController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await getUserByIdService(req.params.id);
+    sendResponse(res, 200, "User fetched successfully!", data);
+  },
+);
+
+export const updateUserStatusController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await updateUserStatusService(req.params.id, req.body.isActive);
+    sendResponse(res, 200, "User status updated successfully!", data);
+  },
+);
+
+export const updateUserRoleController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await updateUserRoleService(req.params.id, req.body.role);
+    sendResponse(res, 200, "User role updated successfully!", data);
+  },
+);
+
+export const deleteUserController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await deleteUserService(req.params.id);
+    sendResponse(res, 200, "User deleted successfully!", data);
+  },
+);
 
 export const getAllUsersController = asyncHandler(
   async (req: Request, res: Response) => {

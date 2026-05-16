@@ -4,15 +4,23 @@ import { authorize } from "../../middleware/authorize.middleware";
 import validateRequest from "../../middleware/validateRequest";
 import {
   createUserController,
+  deleteUserController,
   getAllUsersController,
+  getMeController,
+  getUserByIdController,
   seedSuperAdminController,
   updateAvatarController,
   updateUserController,
+  updateUserRoleController,
+  updateUserStatusController,
 } from "./user.controller";
 import {
   createUserSchema,
+  seedSuperAdminSchema,
   updateAvatarSchema,
+  updateUserRoleSchema,
   updateUserSchema,
+  updateUserStatusSchema,
 } from "./user.validation";
 
 const userRouter = Router();
@@ -28,7 +36,7 @@ userRouter.get(
 
 userRouter.post(
   "/seed-super-admin",
-  validateRequest(createUserSchema),
+  validateRequest(seedSuperAdminSchema),
   seedSuperAdminController,
 );
 
@@ -53,5 +61,27 @@ userRouter.patch(
   validateRequest(updateAvatarSchema),
   updateAvatarController,
 );
+
+userRouter.get("/me", auth, getMeController);
+
+userRouter.get("/:id", auth, authorize(["admin", "moderator"]), getUserByIdController);
+
+userRouter.patch(
+  "/:id/status",
+  auth,
+  authorize(["admin"]),
+  validateRequest(updateUserStatusSchema),
+  updateUserStatusController,
+);
+
+userRouter.patch(
+  "/:id/role",
+  auth,
+  authorize(["admin"]),
+  validateRequest(updateUserRoleSchema),
+  updateUserRoleController,
+);
+
+userRouter.delete("/:id", auth, authorize(["admin"]), deleteUserController);
 
 export default userRouter;
