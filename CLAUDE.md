@@ -34,7 +34,7 @@ Each feature domain lives in `src/modules/<name>/` with a consistent set of file
 - `<name>.interface.ts` — TypeScript interfaces for the domain
 - `<name>.validation.ts` — Zod schemas for request validation
 
-Modules: `auth`, `user`, `project`, `skill`, `education`, `certification`, `setting`, `message`, `testimonial`.
+Modules: `auth`, `user`, `project`, `skill`, `education`, `certification`, `setting`, `message`, `testimonial`, `blog`.
 
 All module routers are registered centrally in `src/routes/index.ts` under `/api/v1/<module>`.
 
