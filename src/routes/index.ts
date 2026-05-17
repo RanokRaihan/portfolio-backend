@@ -2,6 +2,7 @@ import { Router } from "express";
 import authRouter from "../modules/auth/auth.route";
 import certificationRouter from "../modules/certification/certification.route";
 import educationRouter from "../modules/education/education.route";
+import messageRouter from "../modules/message/message.route";
 import projectRouter from "../modules/project/project.route";
 import settingRouter from "../modules/setting/setting.route";
 import skillRouter from "../modules/skill/skill.route";
@@ -37,6 +38,10 @@ const moduleRoutes = [
   {
     path: "/setting",
     route: settingRouter,
+  },
+  {
+    path: "/message",
+    route: messageRouter,
   },
 ];
 

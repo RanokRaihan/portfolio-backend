@@ -305,6 +305,139 @@ export const welcomeEmailTemplate = (
 </body>
 </html>`;
 
+export const newMessageNotificationTemplate = (
+  name: string,
+  email: string,
+  subject: string | undefined,
+  message: string,
+): string => `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Contact Message</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f5f5;padding:48px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+
+          <!-- Logo / Brand -->
+          <tr>
+            <td align="center" style="padding-bottom:28px;">
+              <table role="presentation" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color:#09090b;border-radius:10px;padding:10px 20px;">
+                    <span style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:0.5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Ranok Raihan
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="background-color:#ffffff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.04);overflow:hidden;">
+
+              <!-- Top accent bar -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:linear-gradient(90deg,#2563eb 0%,#3b82f6 100%);height:4px;font-size:0;line-height:0;">&nbsp;</td>
+                </tr>
+              </table>
+
+              <!-- Card body -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:44px 48px 40px;">
+
+                <!-- Icon -->
+                <tr>
+                  <td align="center" style="padding-bottom:24px;">
+                    <div style="width:64px;height:64px;line-height:64px;text-align:center;font-size:28px;background-color:#eff6ff;border-radius:50%;">
+                      &#128172;
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Heading -->
+                <tr>
+                  <td align="center" style="padding-bottom:8px;">
+                    <h1 style="margin:0;font-size:24px;font-weight:700;color:#09090b;letter-spacing:-0.3px;line-height:1.3;">
+                      New message from your portfolio
+                    </h1>
+                  </td>
+                </tr>
+
+                <!-- Subtext -->
+                <tr>
+                  <td align="center" style="padding-bottom:32px;">
+                    <p style="margin:0;font-size:15px;color:#71717a;line-height:1.65;">
+                      Someone just reached out via your contact form.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Sender details -->
+                <tr>
+                  <td style="padding-bottom:24px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fafafa;border:1px solid #e4e4e7;border-radius:10px;overflow:hidden;">
+                      <tr>
+                        <td style="padding:16px 20px;border-bottom:1px solid #e4e4e7;">
+                          <p style="margin:0 0 3px;font-size:11px;font-weight:600;color:#a1a1aa;text-transform:uppercase;letter-spacing:0.6px;">From</p>
+                          <p style="margin:0;font-size:15px;font-weight:500;color:#09090b;">${name}</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:16px 20px;border-bottom:1px solid #e4e4e7;">
+                          <p style="margin:0 0 3px;font-size:11px;font-weight:600;color:#a1a1aa;text-transform:uppercase;letter-spacing:0.6px;">Email</p>
+                          <p style="margin:0;font-size:15px;color:#2563eb;">${email}</p>
+                        </td>
+                      </tr>
+                      ${subject ? `<tr>
+                        <td style="padding:16px 20px;border-bottom:1px solid #e4e4e7;">
+                          <p style="margin:0 0 3px;font-size:11px;font-weight:600;color:#a1a1aa;text-transform:uppercase;letter-spacing:0.6px;">Subject</p>
+                          <p style="margin:0;font-size:15px;color:#09090b;">${subject}</p>
+                        </td>
+                      </tr>` : ""}
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Message body -->
+                <tr>
+                  <td>
+                    <p style="margin:0 0 10px;font-size:11px;font-weight:600;color:#a1a1aa;text-transform:uppercase;letter-spacing:0.6px;">Message</p>
+                    <div style="background-color:#fafafa;border:1px solid #e4e4e7;border-radius:10px;padding:20px;font-size:15px;color:#27272a;line-height:1.7;white-space:pre-wrap;word-break:break-word;">
+                      ${message}
+                    </div>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding-top:28px;">
+              <p style="margin:0 0 6px;font-size:12px;color:#a1a1aa;">
+                &copy; ${new Date().getFullYear()} Ranok Raihan &mdash; Portfolio
+              </p>
+              <p style="margin:0;font-size:12px;color:#d4d4d8;">
+                This notification was sent because someone submitted your contact form.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
 export const resetPasswordEmailTemplate = (
   name: string,
   resetUrl: string,

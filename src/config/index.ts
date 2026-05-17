@@ -40,7 +40,7 @@ type TConfig = {
     apiKey: string;
     fromEmail: string;
   };
-
+  myEmail: string;
   superAdmin: {
     name: string;
     email: string;
@@ -78,6 +78,7 @@ export const config: TConfig = {
     apiKey: process.env.RESEND_API_KEY || "",
     fromEmail: process.env.RESEND_FROM_EMAIL || "",
   },
+  myEmail: process.env.MY_EMAIL || "ranokraihan@gmail.com",
   appUrl: {
     frontendUrl: process.env.FRONTEND_URL || "",
     backendUrl: process.env.BACKEND_URL || "",

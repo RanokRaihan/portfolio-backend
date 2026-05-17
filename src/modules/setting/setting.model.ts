@@ -1,21 +1,17 @@
 import mongoose from "mongoose";
 import { ISiteSettings } from "./setting.interface";
 
-// Single-document collection — only one ever exists.
 const siteSettingsSchema = new mongoose.Schema<ISiteSettings>(
   {
-    // Identity
-    name: { type: String, required: true }, // "Ranok"
-    title: { type: String }, // "Full Stack Developer"
-    bio: { type: String }, // short hero paragraph
-    avatar: { type: String }, // Cloudinary URL
-    resumeUrl: { type: String }, // PDF link
+    name: { type: String, required: true },
+    title: { type: String },
+    bio: { type: String },
+    avatar: { type: String },
+    resumeUrl: { type: String },
 
-    // Status
     openToWork: { type: Boolean, default: false },
-    availableFrom: { type: Date }, // if not immediately available
+    availableFrom: { type: Date },
 
-    // Social links
     socials: {
       github: { type: String },
       linkedin: { type: String },
@@ -25,13 +21,11 @@ const siteSettingsSchema = new mongoose.Schema<ISiteSettings>(
       email: { type: String },
     },
 
-    // SEO defaults (fallback for pages that don't have their own)
     metaTitle: { type: String },
     metaDescription: { type: String },
     ogImage: { type: String },
 
-    // Footer
-    footerText: { type: String }, // "© 2025 Ranok. All rights reserved."
+    footerText: { type: String },
   },
   { timestamps: true },
 );
