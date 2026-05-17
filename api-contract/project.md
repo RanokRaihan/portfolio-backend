@@ -174,3 +174,295 @@ Content-Type: application/json
   "message": "A project with this slug already exists"
 }
 ```
+
+---
+
+## PATCH /:id
+
+Update any field of a project by ID.
+
+**Auth:** Bearer token required. Roles: `admin`, `moderator`.
+
+### Request
+
+```http
+PATCH /api/v1/project/:id
+Authorization: Bearer <access_token>
+Content-Type: application/json
+```
+
+All body fields are optional. At least one must be provided. Unknown keys are rejected.
+
+```json
+{
+  "title": "Updated Title",
+  "status": "PUBLISHED",
+  "featured": true,
+  "techStack": {
+    "backend": ["Node.js", "Express", "TypeScript"],
+    "database": ["MongoDB"]
+  }
+}
+```
+
+### Responses
+
+**200 OK**
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Project updated successfully",
+  "data": { "...full updated project document..." }
+}
+```
+
+**400 Bad Request** — empty body or Zod validation failure
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "At least one field must be provided to update"
+}
+```
+
+**401 Unauthorized** — missing or invalid token  
+**403 Forbidden** — insufficient role
+
+**404 Not Found** — project does not exist or is soft-deleted
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Project not found"
+}
+```
+
+**409 Conflict** — updated slug collides with another project
+```json
+{
+  "success": false,
+  "statusCode": 409,
+  "message": "A project with this slug already exists"
+}
+```
+
+---
+
+## PATCH /:id/status
+
+Change the status of a project.
+
+**Auth:** Bearer token required. Roles: `admin`, `moderator`.
+
+### Request
+
+```http
+PATCH /api/v1/project/:id/status
+Authorization: Bearer <access_token>
+Content-Type: application/json
+```
+
+```json
+{
+  "status": "PUBLISHED"
+}
+```
+
+`status` is required. Allowed values: `DRAFT` `PUBLISHED` `ARCHIVED` `IN_PROGRESS` `COMING_SOON`.
+
+### Responses
+
+**200 OK**
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Project status updated successfully",
+  "data": { "...full updated project document..." }
+}
+```
+
+**400 Bad Request** — missing or invalid status value  
+**401 Unauthorized** — missing or invalid token  
+**403 Forbidden** — insufficient role
+
+**404 Not Found**
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Project not found"
+}
+```
+
+---
+
+## DELETE /:id
+
+Soft-delete a project (sets `isDeleted`, `deletedBy`, `deletedAt`). The document is preserved in the database and excluded from all public and manage queries.
+
+**Auth:** Bearer token required. Roles: `admin`, `moderator`.
+
+### Request
+
+```http
+DELETE /api/v1/project/:id
+Authorization: Bearer <access_token>
+```
+
+### Responses
+
+**200 OK**
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Project deleted successfully",
+  "data": {
+    "_id": "665f1a2b3c4d5e6f7a8b9c0d",
+    "title": "My Portfolio Backend",
+    "deletedAt": "2026-05-16T12:00:00.000Z"
+  }
+}
+```
+
+**401 Unauthorized** — missing or invalid token  
+**403 Forbidden** — insufficient role
+
+**404 Not Found** — project does not exist or is already deleted
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Project not found"
+}
+```
+
+---
+
+## GET /
+
+Get all **published** projects. No authentication required.
+
+### Query parameters
+
+| Param            | Type    | Description                                                  |
+|------------------|---------|--------------------------------------------------------------|
+| `search`         | string  | Text search across `title`, `tagline`, `summary`, `tags`    |
+| `category`       | enum    | Filter by category (e.g. `BACKEND`)                         |
+| `type`           | enum    | Filter by type (e.g. `PERSONAL`)                            |
+| `complexity`     | enum    | Filter by complexity (e.g. `INTERMEDIATE`)                  |
+| `featured`       | boolean | Filter featured projects                                     |
+| `isFeaturedOnHome` | boolean | Filter home-featured projects                              |
+| `sortBy`         | string  | Field to sort by (default: `createdAt`)                     |
+| `sortOrder`      | `asc` \| `desc` | Sort direction (default: `asc`)                   |
+| `page`           | number  | Page number (default: `1`)                                  |
+| `limit`          | number  | Results per page (default: `10`)                            |
+
+### Response — 200 OK
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Projects retrieved successfully",
+  "data": [ { "...project fields (no isDeleted/deletedBy/deletedAt)..." } ],
+  "meta": {
+    "page": 1,
+    "limit": 10,
+    "total": 42,
+    "totalPage": 5
+  }
+}
+```
+
+---
+
+## GET /:id
+
+Get a single **published** project by MongoDB ID. No authentication required.
+
+### Response — 200 OK
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Project retrieved successfully",
+  "data": { "...project fields (no isDeleted/deletedBy/deletedAt)..." }
+}
+```
+
+**404 Not Found** — project does not exist or is not published
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Project not found"
+}
+```
+
+---
+
+## GET /manage
+
+Get **all** non-deleted projects regardless of status.
+
+**Auth:** Bearer token required. Roles: `admin`, `moderator`.
+
+### Query parameters
+
+Supports all the same params as `GET /`, plus:
+
+| Param    | Type | Description                                                              |
+|----------|------|--------------------------------------------------------------------------|
+| `status` | enum | Filter by status: `DRAFT` `PUBLISHED` `ARCHIVED` `IN_PROGRESS` `COMING_SOON` |
+
+### Response — 200 OK
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Projects retrieved successfully",
+  "data": [ { "...full project document..." } ],
+  "meta": {
+    "page": 1,
+    "limit": 10,
+    "total": 55,
+    "totalPage": 6
+  }
+}
+```
+
+**401 Unauthorized** — missing or invalid token  
+**403 Forbidden** — insufficient role
+
+---
+
+## GET /manage/:id
+
+Get any single non-deleted project by MongoDB ID (any status).
+
+**Auth:** Bearer token required. Roles: `admin`, `moderator`.
+
+### Response — 200 OK
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Project retrieved successfully",
+  "data": { "...full project document..." }
+}
+```
+
+**404 Not Found** — project does not exist or is soft-deleted
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Project not found"
+}
+```

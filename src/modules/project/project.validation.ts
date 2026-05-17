@@ -2,6 +2,97 @@ import { z } from "zod";
 
 const urlSchema = z.string().url({ message: "Must be a valid URL" }).optional();
 
+export const changeProjectStatusSchema = z.object({
+  body: z
+    .object({
+      status: z.enum(
+        ["DRAFT", "PUBLISHED", "ARCHIVED", "IN_PROGRESS", "COMING_SOON"],
+        { required_error: "Status is required" },
+      ),
+    })
+    .strict(),
+});
+
+export const updateProjectSchema = z.object({
+  body: z
+    .object({
+      title: z.string().min(3).max(120).trim().optional(),
+      slug: z
+        .string()
+        .min(3)
+        .max(120)
+        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase kebab-case")
+        .optional(),
+      tagline: z.string().min(10).max(200).trim().optional(),
+      summary: z.string().min(20).max(500).optional(),
+      description: z.string().min(50).optional(),
+      highlights: z.array(z.string().min(1)).max(10).optional(),
+      challenges: z.string().max(1000).optional(),
+      lessons: z.string().max(1000).optional(),
+
+      techStack: z
+        .object({
+          frontend: z.array(z.string().min(1)).optional(),
+          backend: z.array(z.string().min(1)).optional(),
+          database: z.array(z.string().min(1)).optional(),
+          devops: z.array(z.string().min(1)).optional(),
+          other: z.array(z.string().min(1)).optional(),
+        })
+        .optional(),
+
+      coverImage: urlSchema,
+      thumbnailImage: urlSchema,
+      images: z.array(z.string().url()).max(10).optional(),
+      videoUrl: urlSchema,
+      demoGifUrl: urlSchema,
+
+      tags: z.array(z.string().min(1).max(30)).max(20).optional(),
+      category: z
+        .enum(["FULL_STACK", "FRONTEND", "BACKEND", "MOBILE", "CLI_TOOL", "LIBRARY", "API", "PACKAGE", "OTHER"])
+        .optional(),
+      type: z
+        .enum(["PERSONAL", "FREELANCE", "OPEN_SOURCE", "CLIENT", "HACKATHON", "OTHER"])
+        .optional(),
+      status: z
+        .enum(["DRAFT", "PUBLISHED", "ARCHIVED", "IN_PROGRESS", "COMING_SOON"])
+        .optional(),
+      complexity: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]).optional(),
+
+      frontendLiveUrl: urlSchema,
+      frontendRepoUrl: urlSchema,
+      backendLiveUrl: urlSchema,
+      backendRepoUrl: urlSchema,
+      caseStudyUrl: urlSchema,
+      npmUrl: urlSchema,
+      devToUrl: urlSchema,
+      figmaUrl: urlSchema,
+
+      linesOfCode: z.number().int().nonnegative().optional(),
+      githubStars: z.number().int().nonnegative().optional(),
+      npmDownloads: z.number().int().nonnegative().optional(),
+      activeUsers: z.number().int().nonnegative().optional(),
+
+      teamSize: z.number().int().min(1).max(100).optional(),
+      myRole: z.string().min(2).max(100).optional(),
+      contributors: z.array(z.string().min(1)).optional(),
+
+      metaTitle: z.string().max(70).optional(),
+      metaDescription: z.string().max(160).optional(),
+      ogImage: urlSchema,
+
+      featured: z.boolean().optional(),
+      sortOrder: z.number().int().min(0).optional(),
+      isFeaturedOnHome: z.boolean().optional(),
+
+      startedAt: z.coerce.date().optional(),
+      completedAt: z.coerce.date().optional(),
+    })
+    .strict()
+    .refine((data) => Object.keys(data).length > 0, {
+      message: "At least one field must be provided to update",
+    }),
+});
+
 export const createProjectSchema = z.object({
   body: z
     .object({
