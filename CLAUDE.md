@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+mandatory update the api-contract and CLAUDE.md if any api updated or created new.
+
 ```bash
 # Development (hot reload via ts-node-dev)
 npm run dev
@@ -24,6 +26,7 @@ Express + TypeScript + Mongoose backend for a portfolio website. All source is u
 ### Module structure
 
 Each feature domain lives in `src/modules/<name>/` with a consistent set of files:
+
 - `<name>.route.ts` — Express Router, applies middleware chain
 - `<name>.controller.ts` — thin request/response handlers, delegates to service
 - `<name>.service.ts` — business logic and Mongoose queries
@@ -31,7 +34,7 @@ Each feature domain lives in `src/modules/<name>/` with a consistent set of file
 - `<name>.interface.ts` — TypeScript interfaces for the domain
 - `<name>.validation.ts` — Zod schemas for request validation
 
-Modules: `auth`, `user`, `project`, `skill`, `education`.
+Modules: `auth`, `user`, `project`, `skill`, `education`, `certification`.
 
 All module routers are registered centrally in `src/routes/index.ts` under `/api/v1/<module>`.
 
@@ -57,10 +60,10 @@ The refresh token is stored as an `httpOnly` cookie (`refreshToken`) and also pe
 
 ```ts
 const result = new QueryBuilder(Model.find(), req.query)
-  .search(["field1", "field2"])   // regex search across fields
+  .search(["field1", "field2"]) // regex search across fields
   .filter(["status", "category"]) // exact match on enumerable fields
-  .sort()                         // ?sortBy=field&sortOrder=desc
-  .paginate();                    // ?page=1&limit=10
+  .sort() // ?sortBy=field&sortOrder=desc
+  .paginate(); // ?page=1&limit=10
 
 const data = await result.modelQuery;
 const meta = await result.countTotal(); // { page, limit, total, totalPage }
@@ -69,6 +72,7 @@ const meta = await result.countTotal(); // { page, limit, total, totalPage }
 ### Responses
 
 All success responses use `sendResponse` (`src/utils/sendResponse.ts`):
+
 ```ts
 sendResponse(res, 200, "message", data, meta?);
 ```
@@ -79,22 +83,22 @@ All errors use `new ApiError(statusCode, message, path?)` and are thrown — `as
 
 Required vars are validated on startup in `src/config/index.ts` — the server throws if any are missing.
 
-| Variable | Required | Purpose |
-|---|---|---|
-| `MONGODB_URI` | yes | MongoDB connection string |
-| `DB_NAME` | yes | Database name |
-| `PORT` | no | Server port (default `5000`) |
-| `NODE_ENV` | no | `development` / `production` |
-| `JWT_ACCESS_SECRET` | yes | Access token signing secret |
-| `JWT_REFRESH_SECRET` | yes | Refresh token signing secret |
-| `JWT_ACCESS_EXPIRES_IN` | no | Access token expiry (default `15m`) |
-| `JWT_REFRESH_EXPIRES_IN` | no | Refresh token expiry (default `7d`) |
-| `BCRYPT_SALT_ROUNDS` | no | bcrypt rounds (default `10`) |
-| `RESEND_API_KEY` | yes | Resend email service API key |
-| `RESEND_FROM_EMAIL` | yes | Sender address for transactional emails |
-| `RESET_PASS_UI_LINK` | no | Frontend base URL used in password reset / welcome emails |
-| `FRONTEND_URL` | no | Frontend base URL used in email verification links |
-| `SUPER_ADMIN_NAME` / `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` | no | Fallback super-admin seed values |
+| Variable                                                          | Required | Purpose                                                   |
+| ----------------------------------------------------------------- | -------- | --------------------------------------------------------- |
+| `MONGODB_URI`                                                     | yes      | MongoDB connection string                                 |
+| `DB_NAME`                                                         | yes      | Database name                                             |
+| `PORT`                                                            | no       | Server port (default `5000`)                              |
+| `NODE_ENV`                                                        | no       | `development` / `production`                              |
+| `JWT_ACCESS_SECRET`                                               | yes      | Access token signing secret                               |
+| `JWT_REFRESH_SECRET`                                              | yes      | Refresh token signing secret                              |
+| `JWT_ACCESS_EXPIRES_IN`                                           | no       | Access token expiry (default `15m`)                       |
+| `JWT_REFRESH_EXPIRES_IN`                                          | no       | Refresh token expiry (default `7d`)                       |
+| `BCRYPT_SALT_ROUNDS`                                              | no       | bcrypt rounds (default `10`)                              |
+| `RESEND_API_KEY`                                                  | yes      | Resend email service API key                              |
+| `RESEND_FROM_EMAIL`                                               | yes      | Sender address for transactional emails                   |
+| `RESET_PASS_UI_LINK`                                              | no       | Frontend base URL used in password reset / welcome emails |
+| `FRONTEND_URL`                                                    | no       | Frontend base URL used in email verification links        |
+| `SUPER_ADMIN_NAME` / `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` | no       | Fallback super-admin seed values                          |
 
 ## API contracts
 
