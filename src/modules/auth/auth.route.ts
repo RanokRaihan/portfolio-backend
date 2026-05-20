@@ -3,6 +3,7 @@ import { auth } from "../../middleware/auth.middleware";
 import validateRequest from "../../middleware/validateRequest";
 import {
   changePasswordController,
+  currentUserController,
   forgotPasswordController,
   loginUserController,
   logoutUserController,
@@ -27,6 +28,7 @@ authRouter.post(
   validateRequest(loginValidationSchema),
   loginUserController,
 );
+authRouter.get("/current-user", auth, currentUserController);
 authRouter.post("/logout", logoutUserController);
 authRouter.post("/refresh-token", refreshTokenController);
 authRouter.patch(

@@ -76,8 +76,8 @@ export const verificationEmailTemplate = (
                 <tr>
                   <td align="center" style="padding-bottom:36px;">
                     <p style="margin:0;font-size:15px;color:#71717a;line-height:1.65;max-width:400px;">
-                      Hey <strong style="color:#09090b;">${name}</strong>, thanks for registering!
-                      Please confirm your email address by clicking the button below.
+                      Hey <strong style="color:#09090b;">${name}</strong>, thanks for registering on the <strong style="color:#09090b;">Ranok Raihan Portfolio Dashboard</strong>!
+                      Please confirm your email address to activate your account.
                     </p>
                   </td>
                 </tr>
@@ -222,7 +222,7 @@ export const welcomeEmailTemplate = (
                 <tr>
                   <td align="center" style="padding-bottom:32px;">
                     <p style="margin:0;font-size:15px;color:#71717a;line-height:1.65;max-width:400px;">
-                      An account has been created for you. Use the credentials below to log in for the first time.
+                      An account has been created for you on the <strong style="color:#09090b;">Ranok Raihan Portfolio Dashboard</strong>. Use the credentials below to log in for the first time.
                     </p>
                   </td>
                 </tr>
@@ -505,7 +505,7 @@ export const resetPasswordEmailTemplate = (
                 <tr>
                   <td align="center" style="padding-bottom:36px;">
                     <p style="margin:0;font-size:15px;color:#71717a;line-height:1.65;max-width:400px;">
-                      Hi <strong style="color:#09090b;">${name}</strong>, we received a request to reset the password for your account.
+                      Hi <strong style="color:#09090b;">${name}</strong>, we received a request to reset the password for your <strong style="color:#09090b;">Ranok Raihan Portfolio Dashboard</strong> account.
                       Click the button below to choose a new password.
                     </p>
                   </td>

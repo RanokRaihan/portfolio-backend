@@ -6,12 +6,14 @@ import ApiError from "../../errors/ApiError";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { createToken } from "../../utils/createToken";
 import { sendResponse } from "../../utils/sendResponse";
+import { parseExpiryToMs } from "../../utils/time";
 import { findUserWithEmailService } from "../user/user.service";
 import { SignOptions } from "./../../../node_modules/@types/jsonwebtoken/index.d";
-import { IjwtPayload, TUserRole } from "./auth.interface";
+import { IjwtPayload, LoggedinUser, TUserRole } from "./auth.interface";
 import {
   clearRefreshTokenService,
   forgotPasswordService,
+  refreshAuthTokenService,
   resetPasswordService,
   sendVerificationEmailService,
   storeRefreshTokenService,
@@ -40,6 +42,8 @@ export const loginUserController = asyncHandler(
       _id: user._id,
       email: user.email,
       role: user.role as TUserRole,
+      needPasswordChange: user.needPasswordChange ?? false,
+      emailVerified: user.emailVerified ?? false,
     };
     const accessToken = createToken(
       jwtPayload,
@@ -138,48 +142,50 @@ export const resetPasswordController = asyncHandler(
   },
 );
 
+export const currentUserController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { _id, email, name, role, needPasswordChange, emailVerified } =
+      req.user as IjwtPayload;
+    const currentUser: LoggedinUser = {
+      _id,
+      email,
+      name,
+      role: role as string,
+      needPasswordChange,
+      emailVerified,
+    };
+    sendResponse(res, 200, "Current user retrieved successfully", currentUser);
+  },
+);
+
 export const refreshTokenController = asyncHandler(
   async (req: Request, res: Response) => {
-    const refreshToken = req?.cookies?.refreshToken;
+    // Extract refresh token from cookies
+
+    const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+
     if (!refreshToken) {
-      throw new ApiError(401, "Unauthorized", "refreshToken");
+      throw new ApiError(
+        401,
+        "Refresh token not provided",
+        "AUTHENTICATION_ERROR",
+      );
     }
-    let payload: IjwtPayload;
-    try {
-      payload = (await jwt.verify(
-        refreshToken,
-        config.jwt.refreshSecret as string,
-      )) as IjwtPayload;
-    } catch (error) {
-      throw new ApiError(401, "Unauthorized", "refreshToken");
-    }
-    const user = await findUserWithEmailService(payload.email);
-    if (!user) {
-      throw new ApiError(401, "Unauthorized", "refreshToken");
-    }
-    // if a stored token exists, it must match (allows sessions pre-dating this feature)
-    if (user.refreshToken && user.refreshToken !== refreshToken) {
-      throw new ApiError(401, "Session expired, please login again", "refreshToken");
-    }
-    const accessToken = createToken(
-      payload,
-      config.jwt.accessSecret as string,
-      config.jwt.accessExpiresIn as SignOptions["expiresIn"],
-    );
-    const newRefreshToken = createToken(
-      payload,
-      config.jwt.refreshSecret as string,
-      config.jwt.refreshExpiresIn as SignOptions["expiresIn"],
-    );
-    await storeRefreshTokenService(user._id as string, newRefreshToken);
+
+    const { newAccessToken, newRefreshToken, userId } =
+      await refreshAuthTokenService(refreshToken);
+    await storeRefreshTokenService(userId as string, newRefreshToken);
+
+    // Set new refresh token as httpOnly cookie
     res.cookie("refreshToken", newRefreshToken, {
-      secure: config.nodeEnv === "production",
       httpOnly: true,
-      sameSite: config.nodeEnv === "production" ? "none" : "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 365,
+      secure: config.nodeEnv === "production",
+      sameSite: "strict",
+      maxAge: parseExpiryToMs(config.jwt.refreshExpiresIn),
     });
+
     sendResponse(res, 200, "Token refreshed", {
-      accessToken,
+      accessToken: newAccessToken,
       refreshToken: newRefreshToken,
     });
   },

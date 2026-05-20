@@ -1,27 +1,70 @@
 import crypto from "crypto";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { Resend } from "resend";
 import { config } from "../../config";
 import ApiError from "../../errors/ApiError";
+import { createToken } from "../../utils/createToken";
 import {
   resetPasswordEmailTemplate,
   verificationEmailTemplate,
 } from "../../utils/emailTemplates";
 import User from "../user/user.model";
+import { IjwtPayload, TUserRole } from "./auth.interface";
 
 const resend = new Resend(config.resend.apiKey);
 
-export const storeRefreshTokenService = async (
-  userId: string,
-  token: string,
-) => {
+const refreshAuthTokenService = async (token: string) => {
+  const { accessSecret, refreshSecret } = config.jwt;
+  let decoded: IjwtPayload;
+  try {
+    decoded = jwt.verify(token, refreshSecret) as IjwtPayload;
+  } catch {
+    throw new ApiError(401, "Invalid refresh token", "AUTHENTICATION_ERROR");
+  }
+
+  if (!decoded._id) {
+    throw new ApiError(401, "Invalid refresh token", "AUTHENTICATION_ERROR");
+  }
+
+  const user = await User.findOne({ _id: decoded._id, isDeleted: false });
+
+  if (!user) {
+    throw new ApiError(404, "User not found", "NOT_FOUND");
+  }
+
+  const freshPayload: IjwtPayload = {
+    name: user.name,
+    _id: user._id as string,
+    email: user.email,
+    role: user.role as TUserRole,
+    needPasswordChange: user.needPasswordChange ?? false,
+    emailVerified: user.emailVerified ?? false,
+  };
+  const newAccessToken = createToken(
+    freshPayload,
+    config.jwt.accessSecret as string,
+    config.jwt.accessExpiresIn as SignOptions["expiresIn"],
+  );
+  const newRefreshToken = createToken(
+    freshPayload,
+    config.jwt.refreshSecret as string,
+    config.jwt.refreshExpiresIn as SignOptions["expiresIn"],
+  );
+  return {
+    userId: user._id,
+    newAccessToken,
+    newRefreshToken,
+  };
+};
+const storeRefreshTokenService = async (userId: string, token: string) => {
   await User.findByIdAndUpdate(userId, { refreshToken: token });
 };
 
-export const clearRefreshTokenService = async (email: string) => {
+const clearRefreshTokenService = async (email: string) => {
   await User.findOneAndUpdate({ email }, { $unset: { refreshToken: "" } });
 };
 
-export const sendVerificationEmailService = async (email: string) => {
+const sendVerificationEmailService = async (email: string) => {
   const user = await User.findOne({ email, isDeleted: false });
   if (!user) {
     throw new ApiError(
@@ -84,7 +127,7 @@ export const sendVerificationEmailService = async (email: string) => {
   }
 };
 
-export const verifyEmailService = async (token: string) => {
+const verifyEmailService = async (token: string) => {
   const user = await User.findOne({
     emailVerificationToken: token,
     emailVerificationTokenExpires: { $gt: new Date() },
@@ -106,7 +149,7 @@ export const verifyEmailService = async (token: string) => {
   await user.save();
 };
 
-export const forgotPasswordService = async (email: string) => {
+const forgotPasswordService = async (email: string) => {
   const user = await User.findOne({ email, isDeleted: false, isActive: true });
   if (!user) {
     throw new ApiError(
@@ -118,8 +161,7 @@ export const forgotPasswordService = async (email: string) => {
 
   if (user.passwordResetTokenExpires) {
     const timeSinceLastRequest =
-      Date.now() -
-      (user.passwordResetTokenExpires.getTime() - 15 * 60 * 1000);
+      Date.now() - (user.passwordResetTokenExpires.getTime() - 15 * 60 * 1000);
     if (timeSinceLastRequest < 5 * 60 * 1000) {
       const remainingSeconds = Math.ceil(
         (5 * 60 * 1000 - timeSinceLastRequest) / 1000,
@@ -163,10 +205,7 @@ export const forgotPasswordService = async (email: string) => {
   }
 };
 
-export const resetPasswordService = async (
-  token: string,
-  newPassword: string,
-) => {
+const resetPasswordService = async (token: string, newPassword: string) => {
   const user = await User.findOne({
     passwordResetToken: token,
     passwordResetTokenExpires: { $gt: new Date() },
@@ -186,4 +225,14 @@ export const resetPasswordService = async (
   user.passwordResetToken = undefined;
   user.passwordResetTokenExpires = undefined;
   await user.save();
+};
+
+export {
+  clearRefreshTokenService,
+  forgotPasswordService,
+  refreshAuthTokenService,
+  resetPasswordService,
+  sendVerificationEmailService,
+  storeRefreshTokenService,
+  verifyEmailService,
 };

@@ -55,11 +55,42 @@ Login with email and password.
 
 Sets `refreshToken` as an `httpOnly` cookie (1 year, `sameSite: none` in production).
 
+Access token JWT payload includes: `_id`, `name`, `email`, `role`, `needPasswordChange`, `emailVerified`.
+
 **Errors:**
 | Status | Condition |
 |---|---|
 | 401 | Email not found or password mismatch |
 | 400 | Validation failure |
+
+---
+
+## GET /current-user
+
+Return the authenticated user's profile from the access token payload.
+
+**Auth:** Bearer token required
+
+**Request body:** none
+
+**Response `200`:**
+```json
+{
+  "data": {
+    "_id": "64a1b2c3d4e5f6a7b8c9d0e1",
+    "email": "user@example.com",
+    "name": "John Doe",
+    "role": "admin",
+    "needPasswordChange": false,
+    "emailVerified": true
+  }
+}
+```
+
+**Errors:**
+| Status | Condition |
+|---|---|
+| 401 | Missing or invalid Bearer token |
 
 ---
 
