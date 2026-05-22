@@ -206,7 +206,7 @@ export const createProjectSchema = z.object({
 
       metaTitle: z.string().max(70).optional(),
       metaDescription: z.string().max(160).optional(),
-      ogImage: urlSchema,
+      ogImage: optionalUrlSchema,
 
       featured: z.boolean().optional(),
       sortOrder: z.number().int().min(0).optional(),
