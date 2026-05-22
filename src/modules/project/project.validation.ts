@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-const urlSchema = z.string().url({ message: "Must be a valid URL" }).optional();
+const urlSchema = z.string().url({ message: "Must be a valid URL" });
+const optionalUrlSchema = z
+  .string()
+  .url({ message: "Must be a valid URL" })
+  .optional();
 
 export const changeProjectStatusSchema = z.object({
   body: z
@@ -21,7 +25,10 @@ export const updateProjectSchema = z.object({
         .string()
         .min(3)
         .max(120)
-        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase kebab-case")
+        .regex(
+          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          "Slug must be lowercase kebab-case",
+        )
         .optional(),
       tagline: z.string().min(10).max(200).trim().optional(),
       summary: z.string().min(20).max(500).optional(),
@@ -48,10 +55,27 @@ export const updateProjectSchema = z.object({
 
       tags: z.array(z.string().min(1).max(30)).max(20).optional(),
       category: z
-        .enum(["FULL_STACK", "FRONTEND", "BACKEND", "MOBILE", "CLI_TOOL", "LIBRARY", "API", "PACKAGE", "OTHER"])
+        .enum([
+          "FULL_STACK",
+          "FRONTEND",
+          "BACKEND",
+          "MOBILE",
+          "CLI_TOOL",
+          "LIBRARY",
+          "API",
+          "PACKAGE",
+          "OTHER",
+        ])
         .optional(),
       type: z
-        .enum(["PERSONAL", "FREELANCE", "OPEN_SOURCE", "CLIENT", "HACKATHON", "OTHER"])
+        .enum([
+          "PERSONAL",
+          "FREELANCE",
+          "OPEN_SOURCE",
+          "CLIENT",
+          "HACKATHON",
+          "OTHER",
+        ])
         .optional(),
       status: z
         .enum(["DRAFT", "PUBLISHED", "ARCHIVED", "IN_PROGRESS", "COMING_SOON"])
@@ -101,12 +125,7 @@ export const createProjectSchema = z.object({
         .min(3, "Title must be at least 3 characters")
         .max(120, "Title must be at most 120 characters")
         .trim(),
-      slug: z
-        .string()
-        .min(3, "Slug must be at least 3 characters")
-        .max(120)
-        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase kebab-case")
-        .optional(),
+
       tagline: z
         .string({ required_error: "Tagline is required" })
         .min(10, "Tagline must be at least 10 characters")
@@ -134,10 +153,10 @@ export const createProjectSchema = z.object({
         .optional(),
 
       coverImage: urlSchema,
-      thumbnailImage: urlSchema,
-      images: z.array(z.string().url()).max(10).optional(),
-      videoUrl: urlSchema,
-      demoGifUrl: urlSchema,
+      thumbnailImage: optionalUrlSchema,
+      images: z.array(optionalUrlSchema).optional(),
+      videoUrl: optionalUrlSchema,
+      demoGifUrl: optionalUrlSchema,
 
       tags: z.array(z.string().min(1).max(30)).max(20).optional(),
       category: z.enum([
@@ -164,14 +183,14 @@ export const createProjectSchema = z.object({
         .optional(),
       complexity: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
 
-      frontendLiveUrl: urlSchema,
-      frontendRepoUrl: urlSchema,
-      backendLiveUrl: urlSchema,
-      backendRepoUrl: urlSchema,
-      caseStudyUrl: urlSchema,
-      npmUrl: urlSchema,
-      devToUrl: urlSchema,
-      figmaUrl: urlSchema,
+      frontendLiveUrl: optionalUrlSchema,
+      frontendRepoUrl: optionalUrlSchema,
+      backendLiveUrl: optionalUrlSchema,
+      backendRepoUrl: optionalUrlSchema,
+      caseStudyUrl: optionalUrlSchema,
+      npmUrl: optionalUrlSchema,
+      devToUrl: optionalUrlSchema,
+      figmaUrl: optionalUrlSchema,
 
       linesOfCode: z.number().int().nonnegative().optional(),
       githubStars: z.number().int().nonnegative().optional(),

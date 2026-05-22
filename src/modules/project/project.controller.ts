@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import ApiError from "../../errors/ApiError";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { sendResponse } from "../../utils/sendResponse";
 import {
@@ -14,9 +15,13 @@ import {
 
 const createProjectController = asyncHandler(
   async (req: Request, res: Response) => {
+    const userId = req?.user?._id;
+    if (!userId) {
+      throw new ApiError(401, "you are not authorized to perform this action");
+    }
     const project = await createProjectService({
       ...req.body,
-      addedBy: req.user._id,
+      addedBy: userId,
     });
     sendResponse(res, 201, "Project created successfully", project);
   },
@@ -63,7 +68,10 @@ const updateProjectController = asyncHandler(
 
 const changeProjectStatusController = asyncHandler(
   async (req: Request, res: Response) => {
-    const project = await changeProjectStatusService(req.params.id, req.body.status);
+    const project = await changeProjectStatusService(
+      req.params.id,
+      req.body.status,
+    );
     sendResponse(res, 200, "Project status updated successfully", project);
   },
 );

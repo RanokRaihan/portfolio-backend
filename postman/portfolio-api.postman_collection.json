@@ -25,6 +25,41 @@
       "key": "project_id",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "skill_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "education_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "certification_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "blog_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "blog_slug",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "message_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testimonial_id",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -507,6 +542,599 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Skill",
+      "item": [
+        {
+          "name": "Get All Skills",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/skill",
+              "host": ["{{base_url}}"],
+              "path": ["skill"],
+              "query": [
+                { "key": "category", "value": "LANGUAGE", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Skill",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"TypeScript\",\n  \"category\": \"LANGUAGE\",\n  \"level\": \"ADVANCED\",\n  \"iconUrl\": \"https://cdn.example.com/icons/typescript.svg\",\n  \"iconName\": \"typescript\",\n  \"featured\": true,\n  \"sortOrder\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/skill",
+              "host": ["{{base_url}}"],
+              "path": ["skill"]
+            }
+          }
+        },
+        {
+          "name": "Update Skill",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level\": \"EXPERT\",\n  \"featured\": true,\n  \"sortOrder\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/skill/{{skill_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["skill", "{{skill_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Skill",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/skill/{{skill_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["skill", "{{skill_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Education",
+      "item": [
+        {
+          "name": "Get All Education Records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/education",
+              "host": ["{{base_url}}"],
+              "path": ["education"]
+            }
+          }
+        },
+        {
+          "name": "Create Education Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"institution\": \"University of Dhaka\",\n  \"startDate\": \"2019-01-01\",\n  \"degree\": \"Bachelor of Science\",\n  \"field\": \"Computer Science\",\n  \"description\": \"Graduated with distinction.\",\n  \"logoUrl\": \"https://cdn.example.com/logos/du.png\",\n  \"location\": \"Dhaka, Bangladesh\",\n  \"isCurrent\": false,\n  \"endDate\": \"2023-01-01\",\n  \"featured\": true,\n  \"sortOrder\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/education",
+              "host": ["{{base_url}}"],
+              "path": ["education"]
+            }
+          }
+        },
+        {
+          "name": "Update Education Record",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isCurrent\": true,\n  \"description\": \"Updated description.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/education/{{education_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["education", "{{education_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Education Record (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/education/{{education_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["education", "{{education_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Certification",
+      "item": [
+        {
+          "name": "Get All Certifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/certification",
+              "host": ["{{base_url}}"],
+              "path": ["certification"]
+            }
+          }
+        },
+        {
+          "name": "Create Certification",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AWS Certified Developer – Associate\",\n  \"issuer\": \"Amazon Web Services\",\n  \"issuedAt\": \"2024-03-15\",\n  \"issuerLogoUrl\": \"https://cdn.example.com/logos/aws.png\",\n  \"credentialId\": \"ABC123XYZ\",\n  \"credentialUrl\": \"https://aws.amazon.com/verify/ABC123XYZ\",\n  \"certificateUrl\": \"https://cdn.example.com/certs/aws-dev.pdf\",\n  \"badgeUrl\": \"https://cdn.example.com/badges/aws-dev.png\",\n  \"isExpired\": false,\n  \"isLifetime\": false,\n  \"expiresAt\": \"2027-03-15\",\n  \"courseStartDate\": \"2024-01-01\",\n  \"courseEndDate\": \"2024-03-01\",\n  \"featured\": true,\n  \"sortOrder\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/certification",
+              "host": ["{{base_url}}"],
+              "path": ["certification"]
+            }
+          }
+        },
+        {
+          "name": "Update Certification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isExpired\": true,\n  \"featured\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/certification/{{certification_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["certification", "{{certification_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Certification (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/certification/{{certification_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["certification", "{{certification_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Blog",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Get All Published Blogs",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/blog?page=1&limit=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "10" },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "sortBy", "value": "createdAt", "disabled": true },
+                    { "key": "sortOrder", "value": "desc", "disabled": true }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Published Blog by Slug",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/blog/{{blog_slug}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog", "{{blog_slug}}"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Protected",
+          "item": [
+            {
+              "name": "Get All Blogs (Admin)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/blog/all?page=1&limit=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog", "all"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "10" },
+                    { "key": "status", "value": "DRAFT", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "sortBy", "value": "createdAt", "disabled": true },
+                    { "key": "sortOrder", "value": "desc", "disabled": true }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Blog",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Getting Started with TypeScript\",\n  \"summary\": \"A beginner-friendly intro to TypeScript...\",\n  \"content\": \"# Getting Started\\n\\nTypeScript is a typed superset of JavaScript...\",\n  \"coverImage\": \"https://example.com/cover.jpg\",\n  \"tags\": [\"typescript\", \"javascript\"],\n  \"status\": \"DRAFT\",\n  \"metaTitle\": \"Getting Started with TypeScript | Ranok Raihan\",\n  \"metaDescription\": \"Learn the basics of TypeScript...\",\n  \"ogImage\": \"https://example.com/og.jpg\",\n  \"featured\": false\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/blog",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog"]
+                }
+              }
+            },
+            {
+              "name": "Update Blog",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"PUBLISHED\",\n  \"featured\": true,\n  \"metaTitle\": \"Updated SEO title\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/blog/{{blog_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog", "{{blog_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Delete Blog (Soft)",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/blog/{{blog_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog", "{{blog_id}}"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Message",
+      "item": [
+        {
+          "name": "Submit Message (Public)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"subject\": \"Collaboration opportunity\",\n  \"message\": \"Hi, I'd love to work with you on a project!\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/message",
+              "host": ["{{base_url}}"],
+              "path": ["message"]
+            }
+          }
+        },
+        {
+          "name": "Get All Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/message?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["message"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "UNREAD", "disabled": true },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "sortBy", "value": "createdAt", "disabled": true },
+                { "key": "sortOrder", "value": "desc", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Message by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/message/{{message_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["message", "{{message_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Message Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"REPLIED\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/message/{{message_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["message", "{{message_id}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete Message",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/message/{{message_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["message", "{{message_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Testimonial",
+      "item": [
+        {
+          "name": "Get All Testimonials",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/testimonial?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "featured", "value": "true", "disabled": true },
+                { "key": "relation", "value": "PEER", "disabled": true },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "sortBy", "value": "createdAt", "disabled": true },
+                { "key": "sortOrder", "value": "asc", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Testimonial by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/testimonial/{{testimonial_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial", "{{testimonial_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Testimonial",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"role\": \"Senior Engineer at Google\",\n  \"company\": \"Google\",\n  \"avatar\": \"https://example.com/avatar.jpg\",\n  \"linkedIn\": \"https://linkedin.com/in/janesmith\",\n  \"quote\": \"Working with Ranok was an exceptional experience that I highly recommend.\",\n  \"relation\": \"PEER\",\n  \"featured\": true,\n  \"sortOrder\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/testimonial",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial"]
+            }
+          }
+        },
+        {
+          "name": "Update Testimonial",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote\": \"Updated testimonial text that reflects a great collaboration.\",\n  \"featured\": false,\n  \"sortOrder\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/testimonial/{{testimonial_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial", "{{testimonial_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Testimonial (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/testimonial/{{testimonial_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial", "{{testimonial_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Setting",
+      "item": [
+        {
+          "name": "Get Site Settings (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/setting",
+              "host": ["{{base_url}}"],
+              "path": ["setting"]
+            }
+          }
+        },
+        {
+          "name": "Get Site Settings (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/setting/admin",
+              "host": ["{{base_url}}"],
+              "path": ["setting", "admin"]
+            }
+          }
+        },
+        {
+          "name": "Create Site Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ranok Raihan\",\n  \"title\": \"Full Stack Developer\",\n  \"bio\": \"I build scalable web applications.\",\n  \"avatar\": \"https://cdn.example.com/avatar.png\",\n  \"resumeUrl\": \"https://cdn.example.com/resume.pdf\",\n  \"openToWork\": true,\n  \"availableFrom\": \"2026-06-01\",\n  \"socials\": {\n    \"github\": \"https://github.com/ranokraihan\",\n    \"linkedin\": \"https://linkedin.com/in/ranokraihan\",\n    \"twitter\": \"https://twitter.com/ranokraihan\",\n    \"devTo\": \"https://dev.to/ranokraihan\",\n    \"youtube\": \"https://youtube.com/@ranokraihan\",\n    \"email\": \"ranok@example.com\"\n  },\n  \"metaTitle\": \"Ranok Raihan – Full Stack Developer\",\n  \"metaDescription\": \"Portfolio of Ranok Raihan, Full Stack Developer.\",\n  \"ogImage\": \"https://cdn.example.com/og.png\",\n  \"footerText\": \"© 2026 Ranok Raihan. All rights reserved.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/setting",
+              "host": ["{{base_url}}"],
+              "path": ["setting"]
+            }
+          }
+        },
+        {
+          "name": "Update Site Settings",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"openToWork\": false,\n  \"socials\": {\n    \"github\": \"https://github.com/ranokraihan-new\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/setting",
+              "host": ["{{base_url}}"],
+              "path": ["setting"]
+            }
+          }
         }
       ]
     }

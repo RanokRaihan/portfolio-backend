@@ -48,9 +48,10 @@ Content-Type: application/json
   "type": "PERSONAL",
   "complexity": "INTERMEDIATE",
   "myRole": "Solo Developer",
+  "coverImage": "https://example.com/cover.png",
+  "ogImage": "https://example.com/og.png",
 
   // Optional fields
-  "slug": "my-portfolio-backend",
   "highlights": ["JWT auth", "Zod validation", "Soft delete"],
   "challenges": "Designing a clean module structure that scales.",
   "lessons": "Keeping controllers thin and pushing logic to services pays off.",
@@ -59,7 +60,6 @@ Content-Type: application/json
     "database": ["MongoDB", "Mongoose"],
     "devops": ["Railway"]
   },
-  "coverImage": "https://example.com/cover.png",
   "thumbnailImage": "https://example.com/thumb.png",
   "images": ["https://example.com/ss1.png"],
   "videoUrl": "https://youtube.com/watch?v=xxx",
@@ -82,7 +82,6 @@ Content-Type: application/json
   "contributors": ["Alice", "Bob"],
   "metaTitle": "My Portfolio Backend — TypeScript + Express",
   "metaDescription": "A production-ready portfolio backend API.",
-  "ogImage": "https://example.com/og.png",
   "featured": false,
   "sortOrder": 0,
   "isFeaturedOnHome": false,
@@ -103,6 +102,8 @@ Content-Type: application/json
 | `type`        | enum     | `PERSONAL` `FREELANCE` `OPEN_SOURCE` `CLIENT` `HACKATHON` `OTHER`  |
 | `complexity`  | enum     | `BEGINNER` `INTERMEDIATE` `ADVANCED`                                |
 | `myRole`      | string   | 2–100 chars                                                         |
+| `coverImage`  | string   | valid URL                                                           |
+| `ogImage`     | string   | valid URL                                                           |
 
 ### Responses
 

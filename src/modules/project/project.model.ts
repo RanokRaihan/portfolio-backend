@@ -36,7 +36,7 @@ const projectSchema = new mongoose.Schema<IProject>(
     },
 
     // Media
-    coverImage: { type: String },
+    coverImage: { type: String, required: true },
     thumbnailImage: { type: String },
     images: [{ type: String }],
     videoUrl: { type: String },
@@ -127,15 +127,27 @@ const projectSchema = new mongoose.Schema<IProject>(
   },
 );
 
-// Auto-generate slug from title if not provided
-projectSchema.pre("save", function (next) {
+// Auto-generate slug from title if not provided, ensuring uniqueness
+projectSchema.pre("save", async function (next) {
   if (!this.isModified("title") || this.slug) return next();
-  this.slug = this.title
+
+  const baseSlug = this.title
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, "")
     .replace(/[\s_]+/g, "-")
     .replace(/--+/g, "-");
+
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (
+    await mongoose.model("Project").exists({ slug, _id: { $ne: this._id } })
+  ) {
+    slug = `${baseSlug}-${counter++}`;
+  }
+
+  this.slug = slug;
   next();
 });
 
