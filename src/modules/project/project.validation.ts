@@ -47,11 +47,11 @@ export const updateProjectSchema = z.object({
         })
         .optional(),
 
-      coverImage: urlSchema,
-      thumbnailImage: urlSchema,
-      images: z.array(z.string().url()).max(10).optional(),
-      videoUrl: urlSchema,
-      demoGifUrl: urlSchema,
+      coverImage: optionalUrlSchema,
+      thumbnailImage: optionalUrlSchema,
+      images: z.array(optionalUrlSchema).max(10).optional(),
+      videoUrl: optionalUrlSchema,
+      demoGifUrl: optionalUrlSchema,
 
       tags: z.array(z.string().min(1).max(30)).max(20).optional(),
       category: z
@@ -82,14 +82,14 @@ export const updateProjectSchema = z.object({
         .optional(),
       complexity: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]).optional(),
 
-      frontendLiveUrl: urlSchema,
-      frontendRepoUrl: urlSchema,
-      backendLiveUrl: urlSchema,
-      backendRepoUrl: urlSchema,
-      caseStudyUrl: urlSchema,
-      npmUrl: urlSchema,
-      devToUrl: urlSchema,
-      figmaUrl: urlSchema,
+      frontendLiveUrl: optionalUrlSchema,
+      frontendRepoUrl: optionalUrlSchema,
+      backendLiveUrl: optionalUrlSchema,
+      backendRepoUrl: optionalUrlSchema,
+      caseStudyUrl: optionalUrlSchema,
+      npmUrl: optionalUrlSchema,
+      devToUrl: optionalUrlSchema,
+      figmaUrl: optionalUrlSchema,
 
       linesOfCode: z.number().int().nonnegative().optional(),
       githubStars: z.number().int().nonnegative().optional(),
@@ -102,7 +102,7 @@ export const updateProjectSchema = z.object({
 
       metaTitle: z.string().max(70).optional(),
       metaDescription: z.string().max(160).optional(),
-      ogImage: urlSchema,
+      ogImage: optionalUrlSchema,
 
       featured: z.boolean().optional(),
       sortOrder: z.number().int().min(0).optional(),

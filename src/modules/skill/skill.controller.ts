@@ -5,6 +5,7 @@ import {
   createSkillService,
   deleteSkillService,
   getAllPublicSkillsService,
+  getSkillByIdService,
   updateSkillService,
 } from "./skill.service";
 
@@ -26,6 +27,13 @@ const getAllPublicSkillsController = asyncHandler(
   },
 );
 
+const getSkillByIdController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const skill = await getSkillByIdService(req.params.id);
+    sendResponse(res, 200, "Skill retrieved successfully", skill);
+  },
+);
+
 const updateSkillController = asyncHandler(
   async (req: Request, res: Response) => {
     const skill = await updateSkillService(req.params.id, req.body);
@@ -44,5 +52,6 @@ export {
   createSkillController,
   deleteSkillController,
   getAllPublicSkillsController,
+  getSkillByIdController,
   updateSkillController,
 };

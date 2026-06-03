@@ -380,6 +380,38 @@ Get all **published** projects. No authentication required.
 
 ---
 
+## GET /slug/:slug
+
+Get a single **published** project by slug. No authentication required.
+
+### Request
+
+```http
+GET /api/v1/project/slug/:slug
+```
+
+### Response — 200 OK
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Project retrieved successfully",
+  "data": { "...project fields (no isDeleted/deletedBy/deletedAt)..." }
+}
+```
+
+**404 Not Found** — project does not exist, is not published, or slug does not match
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Project not found"
+}
+```
+
+---
+
 ## GET /:id
 
 Get a single **published** project by MongoDB ID. No authentication required.

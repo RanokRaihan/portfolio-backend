@@ -9,6 +9,7 @@ import {
   getAllPublicProjectsController,
   getManagedProjectByIdController,
   getPublicProjectByIdController,
+  getPublicProjectBySlugController,
   softDeleteProjectController,
   updateProjectController,
 } from "./project.controller";
@@ -68,6 +69,7 @@ projectRouter.delete(
 
 // Public routes
 projectRouter.get("/", getAllPublicProjectsController);
+projectRouter.get("/slug/:slug", getPublicProjectBySlugController);
 projectRouter.get("/:id", getPublicProjectByIdController);
 
 export default projectRouter;

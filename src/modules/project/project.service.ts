@@ -38,6 +38,19 @@ const getAllPublicProjectsService = async (
   return { data, meta };
 };
 
+const getPublicProjectBySlugService = async (slug: string) => {
+  const project = await Project.findOne({
+    slug,
+    isDeleted: false,
+    status: "PUBLISHED",
+  }).select(PUBLIC_PROJECT_FIELDS);
+
+  if (!project) {
+    throw new ApiError(404, "Project not found", "getPublicProjectBySlug");
+  }
+  return project;
+};
+
 const getPublicProjectByIdService = async (id: string) => {
   const project = await Project.findOne({
     _id: id,
@@ -139,6 +152,7 @@ export {
   getAllPublicProjectsService,
   getManagedProjectByIdService,
   getPublicProjectByIdService,
+  getPublicProjectBySlugService,
   softDeleteProjectService,
   updateProjectService,
 };

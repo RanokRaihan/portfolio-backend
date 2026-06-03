@@ -36,6 +36,14 @@ const getAllPublicSkillsService = async (category?: string) => {
   return skills;
 };
 
+const getSkillByIdService = async (id: string) => {
+  const skill = await Skill.findById(id).select("-addedBy");
+  if (!skill) {
+    throw new ApiError(404, "Skill not found", "getSkillById");
+  }
+  return skill;
+};
+
 const updateSkillService = async (
   id: string,
   data: Partial<Omit<ISkill, "addedBy">>,
@@ -79,5 +87,6 @@ export {
   createSkillService,
   deleteSkillService,
   getAllPublicSkillsService,
+  getSkillByIdService,
   updateSkillService,
 };

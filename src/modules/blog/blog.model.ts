@@ -51,7 +51,7 @@ const blogSchema = new mongoose.Schema(
 );
 
 // Auto-generate slug from title on first save (only if no slug provided)
-blogSchema.pre("save", function (next) {
+blogSchema.pre("validate", function (next) {
   if (!this.isModified("title") || this.slug) return next();
   this.slug = this.title
     .toLowerCase()

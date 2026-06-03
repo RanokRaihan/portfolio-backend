@@ -9,6 +9,7 @@ import {
   getAllPublicProjectsService,
   getManagedProjectByIdService,
   getPublicProjectByIdService,
+  getPublicProjectBySlugService,
   softDeleteProjectService,
   updateProjectService,
 } from "./project.service";
@@ -39,6 +40,13 @@ const getAllPublicProjectsController = asyncHandler(
 const getPublicProjectByIdController = asyncHandler(
   async (req: Request, res: Response) => {
     const project = await getPublicProjectByIdService(req.params.id);
+    sendResponse(res, 200, "Project retrieved successfully", project);
+  },
+);
+
+const getPublicProjectBySlugController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const project = await getPublicProjectBySlugService(req.params.slug);
     sendResponse(res, 200, "Project retrieved successfully", project);
   },
 );
@@ -90,6 +98,7 @@ export {
   getAllPublicProjectsController,
   getManagedProjectByIdController,
   getPublicProjectByIdController,
+  getPublicProjectBySlugController,
   softDeleteProjectController,
   updateProjectController,
 };

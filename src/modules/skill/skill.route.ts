@@ -6,6 +6,7 @@ import {
   createSkillController,
   deleteSkillController,
   getAllPublicSkillsController,
+  getSkillByIdController,
   updateSkillController,
 } from "./skill.controller";
 import { createSkillSchema, updateSkillSchema } from "./skill.validation";
@@ -38,5 +39,6 @@ skillRouter.delete(
 
 // Public routes
 skillRouter.get("/", getAllPublicSkillsController);
+skillRouter.get("/:id", getSkillByIdController);
 
 export default skillRouter;

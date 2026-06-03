@@ -14,6 +14,16 @@ const createCertificationService = async (data: ICertification) => {
   return certification;
 };
 
+const getCertificationByIdService = async (id: string) => {
+  const certification = await Certification.findOne({ _id: id, isDeleted: false }).select(
+    "-addedBy -isDeleted -deletedAt",
+  );
+  if (!certification) {
+    throw new ApiError(404, "Certification not found", "getCertificationById");
+  }
+  return certification;
+};
+
 const getAllCertificationsService = async () => {
   const certifications = await Certification.find({ isDeleted: false })
     .sort({ sortOrder: 1, issuedAt: -1 })
@@ -62,6 +72,7 @@ const softDeleteCertificationService = async (id: string) => {
 
 export {
   createCertificationService,
+  getCertificationByIdService,
   getAllCertificationsService,
   softDeleteCertificationService,
   updateCertificationService,

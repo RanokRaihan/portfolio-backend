@@ -166,6 +166,60 @@ Content-Type: application/json
 
 ---
 
+## GET /:id
+
+Get a single certification record by MongoDB ID. No authentication required.
+
+Soft-deleted records are excluded. `addedBy`, `isDeleted`, and `deletedAt` are excluded from the response.
+
+### Request
+
+```http
+GET /api/v1/certification/:id
+```
+
+### Responses
+
+**200 OK**
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Certification retrieved successfully",
+  "data": {
+    "_id": "665f1a2b3c4d5e6f7a8b9c0d",
+    "name": "AWS Certified Developer – Associate",
+    "issuer": "Amazon Web Services",
+    "issuerLogoUrl": "https://cdn.example.com/logos/aws.png",
+    "credentialId": "ABC123XYZ",
+    "credentialUrl": "https://aws.amazon.com/verify/ABC123XYZ",
+    "certificateUrl": "https://cdn.example.com/certs/aws-dev.pdf",
+    "badgeUrl": "https://cdn.example.com/badges/aws-dev.png",
+    "isExpired": false,
+    "isLifetime": false,
+    "issuedAt": "2024-03-15T00:00:00.000Z",
+    "expiresAt": "2027-03-15T00:00:00.000Z",
+    "courseStartDate": "2024-01-01T00:00:00.000Z",
+    "courseEndDate": "2024-03-01T00:00:00.000Z",
+    "featured": true,
+    "sortOrder": 1,
+    "createdAt": "2026-05-17T10:00:00.000Z",
+    "updatedAt": "2026-05-17T10:00:00.000Z"
+  }
+}
+```
+
+**404 Not Found** — record does not exist or is soft-deleted
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Certification not found"
+}
+```
+
+---
+
 ## PATCH /:id
 
 Update a certification record by MongoDB ID.

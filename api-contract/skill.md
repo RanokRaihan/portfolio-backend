@@ -245,6 +245,50 @@ Authorization: Bearer <access_token>
 
 ---
 
+## GET /:id
+
+Get a single skill by MongoDB ID. No authentication required. `addedBy` is excluded from the response.
+
+### Request
+
+```http
+GET /api/v1/skill/:id
+```
+
+### Response — 200 OK
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Skill retrieved successfully",
+  "data": {
+    "_id": "665f1a2b3c4d5e6f7a8b9c0d",
+    "name": "TypeScript",
+    "slug": "typescript",
+    "category": "LANGUAGE",
+    "level": "ADVANCED",
+    "iconUrl": "https://cdn.example.com/icons/typescript.svg",
+    "iconName": "typescript",
+    "featured": true,
+    "sortOrder": 1,
+    "createdAt": "2026-05-17T10:00:00.000Z",
+    "updatedAt": "2026-05-17T10:00:00.000Z"
+  }
+}
+```
+
+**404 Not Found**
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Skill not found"
+}
+```
+
+---
+
 ## GET /
 
 Get all skills. No authentication required.

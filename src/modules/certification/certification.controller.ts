@@ -3,6 +3,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { sendResponse } from "../../utils/sendResponse";
 import {
   createCertificationService,
+  getCertificationByIdService,
   getAllCertificationsService,
   softDeleteCertificationService,
   updateCertificationService,
@@ -15,6 +16,13 @@ const createCertificationController = asyncHandler(
       addedBy: req.user._id,
     });
     sendResponse(res, 201, "Certification created successfully", certification);
+  },
+);
+
+const getCertificationByIdController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const certification = await getCertificationByIdService(req.params.id);
+    sendResponse(res, 200, "Certification retrieved successfully", certification);
   },
 );
 
@@ -41,6 +49,7 @@ const softDeleteCertificationController = asyncHandler(
 
 export {
   createCertificationController,
+  getCertificationByIdController,
   getAllCertificationsController,
   softDeleteCertificationController,
   updateCertificationController,

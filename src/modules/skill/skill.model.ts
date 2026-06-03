@@ -53,14 +53,35 @@ const skillSchema = new Schema<ISkill>(
   { timestamps: true },
 );
 
-skillSchema.pre("save", function (next) {
+skillSchema.pre("validate", async function (next) {
   if (!this.isModified("name") || this.slug) return next();
-  this.slug = this.name
+
+  const baseSlug = this.name
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, "")
     .replace(/[\s_]+/g, "-")
     .replace(/--+/g, "-");
+
+  // Escape any regex metacharacters in the base slug before embedding in a pattern
+  const escaped = baseSlug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  const existing = await mongoose.model("Skill").distinct("slug", {
+    slug: { $regex: `^${escaped}(-\\d+)?$` },
+    _id: { $ne: this._id },
+  });
+
+  if (!existing.includes(baseSlug)) {
+    this.slug = baseSlug;
+    return next();
+  }
+
+  const maxSuffix = existing.reduce((max, s: string) => {
+    const match = s.match(new RegExp(`^${escaped}-(\\d+)$`));
+    return match ? Math.max(max, parseInt(match[1], 10)) : max;
+  }, 0);
+
+  this.slug = `${baseSlug}-${maxSuffix + 1}`;
   next();
 });
 

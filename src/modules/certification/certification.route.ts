@@ -4,6 +4,7 @@ import { authorize } from "../../middleware/authorize.middleware";
 import validateRequest from "../../middleware/validateRequest";
 import {
   createCertificationController,
+  getCertificationByIdController,
   getAllCertificationsController,
   softDeleteCertificationController,
   updateCertificationController,
@@ -14,6 +15,7 @@ const certificationRouter = Router();
 
 // Public routes
 certificationRouter.get("/", getAllCertificationsController);
+certificationRouter.get("/:id", getCertificationByIdController);
 
 // Protected routes
 certificationRouter.post(

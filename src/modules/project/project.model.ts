@@ -127,8 +127,9 @@ const projectSchema = new mongoose.Schema<IProject>(
   },
 );
 
-// Auto-generate slug from title if not provided, ensuring uniqueness
-projectSchema.pre("save", async function (next) {
+// Auto-generate slug from title if not provided, ensuring uniqueness.
+// Uses a single regex query instead of a loop to avoid N+1 DB round-trips.
+projectSchema.pre("validate", async function (next) {
   if (!this.isModified("title") || this.slug) return next();
 
   const baseSlug = this.title
@@ -138,16 +139,25 @@ projectSchema.pre("save", async function (next) {
     .replace(/[\s_]+/g, "-")
     .replace(/--+/g, "-");
 
-  let slug = baseSlug;
-  let counter = 1;
+  // Escape any regex metacharacters in the base slug before embedding in a pattern
+  const escaped = baseSlug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  while (
-    await mongoose.model("Project").exists({ slug, _id: { $ne: this._id } })
-  ) {
-    slug = `${baseSlug}-${counter++}`;
+  const existing = await mongoose.model("Project").distinct("slug", {
+    slug: { $regex: `^${escaped}(-\\d+)?$` },
+    _id: { $ne: this._id },
+  });
+
+  if (!existing.includes(baseSlug)) {
+    this.slug = baseSlug;
+    return next();
   }
 
-  this.slug = slug;
+  const maxSuffix = existing.reduce((max, s: string) => {
+    const match = s.match(new RegExp(`^${escaped}-(\\d+)$`));
+    return match ? Math.max(max, parseInt(match[1], 10)) : max;
+  }, 0);
+
+  this.slug = `${baseSlug}-${maxSuffix + 1}`;
   next();
 });
 
