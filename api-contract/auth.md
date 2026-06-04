@@ -163,6 +163,8 @@ Change the authenticated user's password.
 
 Sets `needPasswordChange` to `false`.
 
+**Side effect:** If the user was admin-created (`needPasswordChange` was `true`) and their email was not yet verified, this call also sets `emailVerified: true` and `emailVerifiedAt` — implicit email verification via the welcome email delivery.
+
 **Errors:**
 | Status | Condition |
 |---|---|

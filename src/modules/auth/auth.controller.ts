@@ -85,8 +85,13 @@ export const changePasswordController = asyncHandler(
     if (!isPasswordMatched) {
       throw new ApiError(401, "Invalid credentials", "changePassword");
     }
+    const wasFirstLogin = user.needPasswordChange && !user.emailVerified;
     user.password = newPassword;
     user.needPasswordChange = false;
+    if (wasFirstLogin) {
+      user.emailVerified = true;
+      user.emailVerifiedAt = new Date();
+    }
     await user.save();
     sendResponse(res, 200, "Password changed successfully", null);
   },
