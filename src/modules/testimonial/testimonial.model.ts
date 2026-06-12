@@ -6,11 +6,11 @@ const testimonialSchema = new mongoose.Schema(
     addedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
 
     // Person
     name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true },
     role: { type: String, trim: true, required: true }, // "Senior Engineer at Google"
     company: { type: String, trim: true },
     avatar: { type: String },
@@ -27,6 +27,7 @@ const testimonialSchema = new mongoose.Schema(
     // Ordering & visibility
     featured: { type: Boolean, default: false },
     sortOrder: { type: Number, default: 0 },
+    isPublished: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true, versionKey: false },

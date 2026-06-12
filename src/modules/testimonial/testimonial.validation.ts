@@ -11,6 +11,10 @@ export const createTestimonialSchema = z.object({
         .min(1, "Name must be at least 1 character")
         .max(100, "Name must be at most 100 characters")
         .trim(),
+      email: z
+        .string({ required_error: "Email is required" })
+        .email("Must be a valid email address")
+        .trim(),
       role: z
         .string({ required_error: "Role is required" })
         .min(1, "Role must be at least 1 character")
@@ -35,6 +39,7 @@ export const updateTestimonialSchema = z.object({
   body: z
     .object({
       name: z.string().min(1).max(100).trim().optional(),
+      email: z.string().email("Must be a valid email address").trim().optional(),
       role: z.string().min(1).max(150).trim().optional(),
       company: z.string().min(1).max(150).trim().optional(),
       avatar: urlField,

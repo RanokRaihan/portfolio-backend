@@ -8,11 +8,31 @@ export const createTestimonialService = async (data: ITestimonial) => {
   return testimonial;
 };
 
+export const getFeaturedTestimonialsService = async (
+  query: Record<string, unknown>,
+) => {
+  const testimonialQuery = new QueryBuilder(
+    Testimonial.find({ isDeleted: false, isPublished: true, featured: true }),
+    query,
+  )
+    .search(["name", "company", "quote"])
+    .filter(["relation"])
+    .sort()
+    .paginate();
+
+  const data = await testimonialQuery.modelQuery.select(
+    "-addedBy -isDeleted -isPublished -email",
+  );
+  const meta = await testimonialQuery.countTotal();
+
+  return { data, meta };
+};
+
 export const getAllTestimonialsService = async (
   query: Record<string, unknown>,
 ) => {
   const testimonialQuery = new QueryBuilder(
-    Testimonial.find({ isDeleted: false }),
+    Testimonial.find({ isDeleted: false, isPublished: true }),
     query,
   )
     .search(["name", "company", "quote"])
@@ -20,7 +40,27 @@ export const getAllTestimonialsService = async (
     .sort()
     .paginate();
 
-  const data = await testimonialQuery.modelQuery.select("-addedBy -isDeleted");
+  const data = await testimonialQuery.modelQuery.select(
+    "-addedBy -isDeleted -isPublished -email",
+  );
+  const meta = await testimonialQuery.countTotal();
+
+  return { data, meta };
+};
+
+export const getAllTestimonialsAdminService = async (
+  query: Record<string, unknown>,
+) => {
+  const testimonialQuery = new QueryBuilder(
+    Testimonial.find({ isDeleted: false }),
+    query,
+  )
+    .search(["name", "company", "quote"])
+    .filter(["featured", "relation", "isPublished"])
+    .sort()
+    .paginate();
+
+  const data = await testimonialQuery.modelQuery.select("-isDeleted");
   const meta = await testimonialQuery.countTotal();
 
   return { data, meta };
@@ -30,7 +70,7 @@ export const getTestimonialByIdService = async (id: string) => {
   const testimonial = await Testimonial.findOne({
     _id: id,
     isDeleted: false,
-  }).select("-addedBy -isDeleted");
+  }).select("-isDeleted");
 
   if (!testimonial) {
     throw new ApiError(404, "Testimonial not found", "getTestimonialById");
@@ -52,6 +92,21 @@ export const updateTestimonialService = async (
     new: true,
     runValidators: true,
   });
+
+  return updated;
+};
+
+export const togglePublishTestimonialService = async (id: string) => {
+  const existing = await Testimonial.findOne({ _id: id, isDeleted: false });
+  if (!existing) {
+    throw new ApiError(404, "Testimonial not found", "togglePublishTestimonial");
+  }
+
+  const updated = await Testimonial.findByIdAndUpdate(
+    id,
+    { isPublished: !existing.isPublished },
+    { new: true },
+  );
 
   return updated;
 };
