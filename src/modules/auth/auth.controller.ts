@@ -8,7 +8,7 @@ import { createToken } from "../../utils/createToken";
 import { sendResponse } from "../../utils/sendResponse";
 import { parseExpiryToMs } from "../../utils/time";
 import { findUserWithEmailService } from "../user/user.service";
-import { SignOptions } from "./../../../node_modules/@types/jsonwebtoken/index.d";
+import { SignOptions } from "jsonwebtoken";
 import { IjwtPayload, LoggedinUser, TUserRole } from "./auth.interface";
 import {
   clearRefreshTokenService,
@@ -60,7 +60,7 @@ export const loginUserController = asyncHandler(
       secure: config.nodeEnv === "production",
       httpOnly: true,
       sameSite: config.nodeEnv === "production" ? "none" : "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 365,
+      maxAge: parseExpiryToMs(config.jwt.refreshExpiresIn),
       path: "/",
     });
 
@@ -185,7 +185,7 @@ export const refreshTokenController = asyncHandler(
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: config.nodeEnv === "production",
-      sameSite: "strict",
+      sameSite: config.nodeEnv === "production" ? "none" : "lax",
       maxAge: parseExpiryToMs(config.jwt.refreshExpiresIn),
     });
 

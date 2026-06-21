@@ -1,12 +1,10 @@
-import { Resend } from "resend";
 import { config } from "../../config";
 import ApiError from "../../errors/ApiError";
+import { resend } from "../../lib/resend";
 import { newMessageNotificationTemplate } from "../../utils/emailTemplates";
 import QueryBuilder from "../../builder/queryBuilder";
 import { IMessage, TMessageStatus } from "./message.interface";
 import Contact from "./message.model";
-
-const resend = new Resend(config.resend.apiKey);
 
 export const submitMessageService = async (data: IMessage) => {
   const saved = await Contact.create(data);
@@ -63,17 +61,14 @@ export const updateMessageStatusService = async (
   id: string,
   status: TMessageStatus,
 ) => {
-  const contact = await Contact.findById(id);
-  if (!contact) {
-    throw new ApiError(404, "Message not found", "updateMessageStatus");
-  }
-
   const updated = await Contact.findByIdAndUpdate(
     id,
     { status },
     { new: true, runValidators: true },
   );
-
+  if (!updated) {
+    throw new ApiError(404, "Message not found", "updateMessageStatus");
+  }
   return updated;
 };
 

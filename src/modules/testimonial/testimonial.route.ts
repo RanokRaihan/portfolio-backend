@@ -2,6 +2,7 @@ import { Router } from "express";
 import { auth } from "../../middleware/auth.middleware";
 import { authorize } from "../../middleware/authorize.middleware";
 import validateRequest from "../../middleware/validateRequest";
+import { createRateLimiter } from "../../utils/rateLimiter";
 import {
   createTestimonialController,
   getAllTestimonialsAdminController,
@@ -19,11 +20,14 @@ import {
 
 const testimonialRouter = Router();
 
+const testimonialRateLimiter = createRateLimiter({ windowMs: 10 * 60 * 1000, max: 3 });
+
 // Public routes
 testimonialRouter.get("/featured", getFeaturedTestimonialsController);
 testimonialRouter.get("/", getAllTestimonialsController);
 testimonialRouter.post(
   "/",
+  testimonialRateLimiter,
   validateRequest(createTestimonialSchema),
   createTestimonialController,
 );

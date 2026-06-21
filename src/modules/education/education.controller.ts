@@ -4,6 +4,7 @@ import { sendResponse } from "../../utils/sendResponse";
 import {
   createEducationService,
   getAllEducationService,
+  getEducationByIdService,
   softDeleteEducationService,
   updateEducationService,
 } from "./education.service";
@@ -25,6 +26,13 @@ const getAllEducationController = asyncHandler(
   },
 );
 
+const getEducationByIdController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const education = await getEducationByIdService(req.params.id);
+    sendResponse(res, 200, "Education record retrieved successfully", education);
+  },
+);
+
 const updateEducationController = asyncHandler(
   async (req: Request, res: Response) => {
     const education = await updateEducationService(req.params.id, req.body);
@@ -42,6 +50,7 @@ const softDeleteEducationController = asyncHandler(
 export {
   createEducationController,
   getAllEducationController,
+  getEducationByIdController,
   softDeleteEducationController,
   updateEducationController,
 };

@@ -6,7 +6,7 @@ export const loginValidationSchema = z.object({
       email: z.string().email(),
       password: z
         .string()
-        .min(6, { message: "password must be at least 6 character!" })
+        .min(8, { message: "password must be at least 8 character!" })
         .max(20, { message: "password must be at most 20 character!" }),
     })
     .strict(),

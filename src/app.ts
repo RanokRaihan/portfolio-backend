@@ -1,6 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express, { Application } from "express";
+import helmet from "helmet";
 import { globalErrorHandler } from "./errors/globalErrorHandler";
 import notFound from "./middleware/notFound";
 import router from "./routes";
@@ -9,9 +10,12 @@ dotenv.config();
 // Create Express server
 const app: Application = express();
 
+// Security headers
+app.use(helmet());
+
 // Express configuration
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 
 // CORS
 app.use(

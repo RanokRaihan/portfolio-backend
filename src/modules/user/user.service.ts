@@ -1,14 +1,12 @@
 import crypto from "crypto";
-import { Resend } from "resend";
 import QueryBuilder from "../../builder/queryBuilder";
 import { config } from "../../config";
 import ApiError from "../../errors/ApiError";
+import { resend } from "../../lib/resend";
 import { IMeta } from "../../interface/global.interface";
 import { welcomeEmailTemplate } from "../../utils/emailTemplates";
 import { IUser } from "./user.interface";
 import User from "./user.model";
-
-const resend = new Resend(config.resend.apiKey);
 
 const generateTemporaryPassword = (): string => {
   const chars =

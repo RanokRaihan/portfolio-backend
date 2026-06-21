@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { auth } from "../../middleware/auth.middleware";
 import validateRequest from "../../middleware/validateRequest";
+import { createRateLimiter } from "../../utils/rateLimiter";
 import {
   changePasswordController,
   currentUserController,
@@ -23,6 +24,8 @@ import {
 
 const authRouter = Router();
 
+const authRateLimiter = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 10 });
+
 authRouter.post(
   "/login",
   validateRequest(loginValidationSchema),
@@ -44,11 +47,13 @@ authRouter.post(
 );
 authRouter.post(
   "/verify-email",
+  authRateLimiter,
   validateRequest(verifyEmailSchema),
   verifyEmailController,
 );
 authRouter.post(
   "/forgot-password",
+  authRateLimiter,
   validateRequest(forgotPasswordSchema),
   forgotPasswordController,
 );

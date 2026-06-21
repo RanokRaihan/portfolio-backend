@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import jwt, { SignOptions } from "jsonwebtoken";
-import { Resend } from "resend";
 import { config } from "../../config";
 import ApiError from "../../errors/ApiError";
+import { resend } from "../../lib/resend";
 import { createToken } from "../../utils/createToken";
 import {
   resetPasswordEmailTemplate,
@@ -11,7 +11,8 @@ import {
 import User from "../user/user.model";
 import { IjwtPayload, TUserRole } from "./auth.interface";
 
-const resend = new Resend(config.resend.apiKey);
+const hashToken = (token: string) =>
+  crypto.createHash("sha256").update(token).digest("hex");
 
 const refreshAuthTokenService = async (token: string) => {
   const { accessSecret, refreshSecret } = config.jwt;
@@ -57,7 +58,7 @@ const refreshAuthTokenService = async (token: string) => {
   };
 };
 const storeRefreshTokenService = async (userId: string, token: string) => {
-  await User.findByIdAndUpdate(userId, { refreshToken: token });
+  await User.findByIdAndUpdate(userId, { refreshToken: hashToken(token) });
 };
 
 const clearRefreshTokenService = async (email: string) => {
@@ -101,7 +102,7 @@ const sendVerificationEmailService = async (email: string) => {
   const token = crypto.randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
-  user.emailVerificationToken = token;
+  user.emailVerificationToken = hashToken(token);
   user.emailVerificationTokenExpires = expires;
   await user.save();
 
@@ -129,7 +130,7 @@ const sendVerificationEmailService = async (email: string) => {
 
 const verifyEmailService = async (token: string) => {
   const user = await User.findOne({
-    emailVerificationToken: token,
+    emailVerificationToken: hashToken(token),
     emailVerificationTokenExpires: { $gt: new Date() },
     isDeleted: false,
   });
@@ -179,7 +180,7 @@ const forgotPasswordService = async (email: string) => {
   const token = crypto.randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + 15 * 60 * 1000);
 
-  user.passwordResetToken = token;
+  user.passwordResetToken = hashToken(token);
   user.passwordResetTokenExpires = expires;
   await user.save();
 
@@ -207,7 +208,7 @@ const forgotPasswordService = async (email: string) => {
 
 const resetPasswordService = async (token: string, newPassword: string) => {
   const user = await User.findOne({
-    passwordResetToken: token,
+    passwordResetToken: hashToken(token),
     passwordResetTokenExpires: { $gt: new Date() },
     isDeleted: false,
   });

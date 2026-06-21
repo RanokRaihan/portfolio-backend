@@ -3,7 +3,8 @@
 **Date:** 2026-06-20  
 **Branch:** `api-remodel`  
 **Auditor:** Claude Code (automated review)  
-**Scope:** Full source audit of `src/` — security, correctness, performance, and maintainability
+**Scope:** Full source audit of `src/` — security, correctness, performance, and maintainability  
+**Resolution:** 2026-06-21 — all issues except H-1, H-7, M-1, M-6, L-5, L-8 resolved
 
 ---
 
@@ -470,24 +471,30 @@ These things are done well and should be preserved:
 
 Before going live, ensure these are done in order:
 
-- [ ] **C-1** Fix bcrypt salt rounds: `Number(config.bcrypt.saltRounds)`, set `BCRYPT_SALT_ROUNDS=12`
-- [ ] **C-2** Remove or protect `/user/seed-super-admin` with a secret key
-- [ ] **C-3** Hash tokens before DB storage (refresh, reset, verification)
-- [ ] **H-1** Validate stored refresh token against DB in `refreshAuthTokenService`
-- [ ] **H-2** HTML-escape user inputs in email templates
-- [ ] **H-3** Add rate limiter to `POST /testimonial`
-- [ ] **H-4** Make `sameSite` consistent across login and refresh token cookies
-- [ ] **H-5** Sync refresh cookie `maxAge` with `parseExpiryToMs(config.jwt.refreshExpiresIn)`
-- [ ] **H-6** Add rate limiter to `/forgot-password` and `/verify-email`
-- [ ] **H-7** Remove `req.body.refreshToken` fallback in refresh token controller
-- [ ] **M-1** Change role failure status code from 401 → 403
-- [ ] **M-2** Fix email template expiry text: "15 minutes" not "24 hours"
-- [ ] **M-3** Escape `searchTerm` before passing to MongoDB `$regex`
-- [ ] **M-4** Cap `limit` at 100 in `QueryBuilder.paginate()`
-- [ ] **M-5** Add slug uniqueness check to Blog model (match Project model)
-- [ ] **L-1** Install and configure `helmet`
-- [ ] **L-2** Set body size limit on `express.json()`
-- [ ] **L-3** Remove unused `nodemailer` dependency
-- [ ] **L-4** Remove `.DS_Store` and `iterm2.sh` from git history
-- [ ] **L-6** Fix `node_modules` import in `auth.controller.ts`
-- [ ] **L-8** Add request logging (`morgan`)
+- [x] **C-1** Fix bcrypt salt rounds: `Number(config.bcrypt.saltRounds)`, set `BCRYPT_SALT_ROUNDS=12`
+- [x] **C-2** Remove or protect `/user/seed-super-admin` with a secret key — gated by `x-seed-secret` header matched against `SEED_SECRET` env var
+- [x] **C-3** Hash tokens before DB storage (refresh, reset, verification) — SHA-256 applied via `hashToken()` helper in `auth.service.ts`
+- [ ] **H-1** Validate stored refresh token against DB in `refreshAuthTokenService` _(deferred)_
+- [x] **H-2** HTML-escape user inputs in email templates — `escapeHtml()` applied to all user fields in `newMessageNotificationTemplate`
+- [x] **H-3** Add rate limiter to `POST /testimonial` — 3 requests / 10 min per IP
+- [x] **H-4** Make `sameSite` consistent across login and refresh token cookies — both now use `"none"` in production / `"lax"` in development
+- [x] **H-5** Sync refresh cookie `maxAge` with `parseExpiryToMs(config.jwt.refreshExpiresIn)` — login cookie now uses the same parsed expiry
+- [x] **H-6** Add rate limiter to `/forgot-password` and `/verify-email` — 10 requests / 15 min per IP
+- [ ] **H-7** Remove `req.body.refreshToken` fallback in refresh token controller _(deferred)_
+- [ ] **M-1** Change role failure status code from 401 → 403 _(deferred)_
+- [x] **M-2** Fix email template expiry text: "15 minutes" not "24 hours"
+- [x] **M-3** Escape `searchTerm` before passing to MongoDB `$regex` — special chars escaped in `QueryBuilder.search()`
+- [x] **M-4** Cap `limit` at 100 in `QueryBuilder.paginate()` and `countTotal()`
+- [x] **M-5** Add slug uniqueness check to Blog model (match Project model) — `distinct`-based suffix approach applied
+- [ ] **M-6** _(deferred)_
+- [x] **M-7** Align login password min-length to 8 chars (was 6)
+- [x] **M-8** Collapse double DB query in `updateMessageStatusService` to single `findByIdAndUpdate`
+- [x] **L-1** Install and configure `helmet` — added before routes in `app.ts`
+- [x] **L-2** Set body size limit on `express.json()` and `express.urlencoded()` — `2mb`
+- [x] **L-3** Remove unused `nodemailer` and `@types/nodemailer` dependencies
+- [x] **L-4** Remove `.DS_Store` and `iterm2.sh` from git index; added to `.gitignore`
+- [ ] **L-5** _(deferred)_
+- [x] **L-6** Fix `node_modules` import in `auth.controller.ts` — now uses `import { SignOptions } from "jsonwebtoken"`
+- [x] **L-7** Consolidate Resend client to single shared instance in `src/lib/resend.ts`
+- [ ] **L-8** Add request logging (`morgan`) _(deferred)_
+- [x] **L-9** `QueryBuilder.sort()` now accepts optional `allowedFields` allowlist; falls back to `createdAt` for unknown fields

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { auth } from "../../middleware/auth.middleware";
 import { authorize } from "../../middleware/authorize.middleware";
+import ApiError from "../../errors/ApiError";
 import validateRequest from "../../middleware/validateRequest";
 import {
   createUserController,
@@ -36,6 +37,13 @@ userRouter.get(
 
 userRouter.post(
   "/seed-super-admin",
+  (req, _res, next) => {
+    const secret = process.env.SEED_SECRET;
+    if (!secret || req.headers["x-seed-secret"] !== secret) {
+      return next(new ApiError(403, "Forbidden", "seedSuperAdmin"));
+    }
+    next();
+  },
   validateRequest(seedSuperAdminSchema),
   seedSuperAdminController,
 );

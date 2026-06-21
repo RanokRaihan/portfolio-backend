@@ -50,15 +50,35 @@ const blogSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Auto-generate slug from title on first save (only if no slug provided)
-blogSchema.pre("validate", function (next) {
+// Auto-generate slug from title on first save, ensuring uniqueness.
+blogSchema.pre("validate", async function (next) {
   if (!this.isModified("title") || this.slug) return next();
-  this.slug = this.title
+
+  const baseSlug = this.title
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, "")
     .replace(/[\s_]+/g, "-")
     .replace(/--+/g, "-");
+
+  const escaped = baseSlug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  const existing = await mongoose.model("Blog").distinct("slug", {
+    slug: { $regex: `^${escaped}(-\\d+)?$` },
+    _id: { $ne: this._id },
+  });
+
+  if (!existing.includes(baseSlug)) {
+    this.slug = baseSlug;
+    return next();
+  }
+
+  const maxSuffix = existing.reduce((max, s: string) => {
+    const match = s.match(new RegExp(`^${escaped}-(\\d+)$`));
+    return match ? Math.max(max, parseInt(match[1], 10)) : max;
+  }, 0);
+
+  this.slug = `${baseSlug}-${maxSuffix + 1}`;
   next();
 });
 

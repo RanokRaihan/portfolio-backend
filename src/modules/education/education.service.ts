@@ -48,6 +48,16 @@ const updateEducationService = async (
   return education;
 };
 
+const getEducationByIdService = async (id: string) => {
+  const education = await Education.findOne({ _id: id, isDeleted: false }).select(
+    "-addedBy -isDeleted",
+  );
+  if (!education) {
+    throw new ApiError(404, "Education record not found", "getEducationById");
+  }
+  return education;
+};
+
 const softDeleteEducationService = async (id: string) => {
   const education = await Education.findOne({ _id: id, isDeleted: false });
   if (!education) {
@@ -61,6 +71,7 @@ const softDeleteEducationService = async (id: string) => {
 export {
   createEducationService,
   getAllEducationService,
+  getEducationByIdService,
   softDeleteEducationService,
   updateEducationService,
 };

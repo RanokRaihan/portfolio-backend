@@ -1,3 +1,11 @@
+const escapeHtml = (s: string) =>
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 export const verificationEmailTemplate = (
   name: string,
   verificationUrl: string,
@@ -121,7 +129,7 @@ export const verificationEmailTemplate = (
                       <tr>
                         <td style="background-color:#fff7ed;border-radius:8px;border-left:3px solid #f97316;padding:12px 16px;">
                           <p style="margin:0;font-size:13px;color:#78350f;line-height:1.5;">
-                            <strong>This link expires in 24 hours.</strong>
+                            <strong>This link expires in 15 minutes.</strong>
                             If you didn&rsquo;t create an account, you can safely ignore this email.
                           </p>
                         </td>
@@ -310,7 +318,12 @@ export const newMessageNotificationTemplate = (
   email: string,
   subject: string | undefined,
   message: string,
-): string => `<!DOCTYPE html>
+): string => {
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  const safeSubject = subject ? escapeHtml(subject) : undefined;
+  const safeMessage = escapeHtml(message);
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -386,19 +399,19 @@ export const newMessageNotificationTemplate = (
                       <tr>
                         <td style="padding:16px 20px;border-bottom:1px solid #e4e4e7;">
                           <p style="margin:0 0 3px;font-size:11px;font-weight:600;color:#a1a1aa;text-transform:uppercase;letter-spacing:0.6px;">From</p>
-                          <p style="margin:0;font-size:15px;font-weight:500;color:#09090b;">${name}</p>
+                          <p style="margin:0;font-size:15px;font-weight:500;color:#09090b;">${safeName}</p>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding:16px 20px;border-bottom:1px solid #e4e4e7;">
                           <p style="margin:0 0 3px;font-size:11px;font-weight:600;color:#a1a1aa;text-transform:uppercase;letter-spacing:0.6px;">Email</p>
-                          <p style="margin:0;font-size:15px;color:#2563eb;">${email}</p>
+                          <p style="margin:0;font-size:15px;color:#2563eb;">${safeEmail}</p>
                         </td>
                       </tr>
-                      ${subject ? `<tr>
+                      ${safeSubject ? `<tr>
                         <td style="padding:16px 20px;border-bottom:1px solid #e4e4e7;">
                           <p style="margin:0 0 3px;font-size:11px;font-weight:600;color:#a1a1aa;text-transform:uppercase;letter-spacing:0.6px;">Subject</p>
-                          <p style="margin:0;font-size:15px;color:#09090b;">${subject}</p>
+                          <p style="margin:0;font-size:15px;color:#09090b;">${safeSubject}</p>
                         </td>
                       </tr>` : ""}
                     </table>
@@ -410,7 +423,7 @@ export const newMessageNotificationTemplate = (
                   <td>
                     <p style="margin:0 0 10px;font-size:11px;font-weight:600;color:#a1a1aa;text-transform:uppercase;letter-spacing:0.6px;">Message</p>
                     <div style="background-color:#fafafa;border:1px solid #e4e4e7;border-radius:10px;padding:20px;font-size:15px;color:#27272a;line-height:1.7;white-space:pre-wrap;word-break:break-word;">
-                      ${message}
+                      ${safeMessage}
                     </div>
                   </td>
                 </tr>
@@ -437,6 +450,7 @@ export const newMessageNotificationTemplate = (
   </table>
 </body>
 </html>`;
+};
 
 export const resetPasswordEmailTemplate = (
   name: string,

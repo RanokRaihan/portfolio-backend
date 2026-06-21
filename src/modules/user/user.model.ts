@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { model, Schema } from "mongoose";
+import { config } from "../../config";
 import { IUser, UserRole } from "./user.interface";
 
 const userSchema = new Schema<IUser>(
@@ -102,7 +103,7 @@ const userSchema = new Schema<IUser>(
 userSchema.pre("save", async function (next) {
   const user = this;
   if (user.isModified("password")) {
-    user.password = await bcrypt.hash(user.password, 8);
+    user.password = await bcrypt.hash(user.password, Number(config.bcrypt.saltRounds));
   }
   next();
 });

@@ -240,6 +240,56 @@ Authorization: Bearer <access_token>
 
 ---
 
+## GET /:id
+
+Get a single education record by MongoDB ID. No authentication required.
+
+Soft-deleted records are excluded. `addedBy` and `isDeleted` are excluded from the response.
+
+### Request
+
+```http
+GET /api/v1/education/:id
+```
+
+### Responses
+
+**200 OK**
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Education record retrieved successfully",
+  "data": {
+    "_id": "665f1a2b3c4d5e6f7a8b9c0d",
+    "institution": "University of Dhaka",
+    "degree": "Bachelor of Science",
+    "field": "Computer Science",
+    "description": "Graduated with distinction.",
+    "logoUrl": "https://cdn.example.com/logos/du.png",
+    "location": "Dhaka, Bangladesh",
+    "isCurrent": false,
+    "startDate": "2019-01-01T00:00:00.000Z",
+    "endDate": "2023-01-01T00:00:00.000Z",
+    "featured": true,
+    "sortOrder": 1,
+    "createdAt": "2026-05-17T10:00:00.000Z",
+    "updatedAt": "2026-05-17T10:00:00.000Z"
+  }
+}
+```
+
+**404 Not Found** — record does not exist or is soft-deleted
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Education record not found"
+}
+```
+
+---
+
 ## GET /
 
 Get all education records. No authentication required.

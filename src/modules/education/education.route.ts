@@ -5,6 +5,7 @@ import validateRequest from "../../middleware/validateRequest";
 import {
   createEducationController,
   getAllEducationController,
+  getEducationByIdController,
   softDeleteEducationController,
   updateEducationController,
 } from "./education.controller";
@@ -14,6 +15,7 @@ const educationRouter = Router();
 
 // Public routes
 educationRouter.get("/", getAllEducationController);
+educationRouter.get("/:id", getEducationByIdController);
 
 // Protected routes
 educationRouter.post(
