@@ -99,6 +99,7 @@ Required vars are validated on startup in `src/config/index.ts` — the server t
 | `RESET_PASS_UI_LINK`                                              | no       | Frontend base URL used in password reset / welcome emails |
 | `FRONTEND_URL`                                                    | no       | Frontend base URL used in email verification links        |
 | `SUPER_ADMIN_NAME` / `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` | no       | Fallback super-admin seed values                          |
+| `SEED_SECRET`                                                     | no       | Secret required in `X-Seed-Secret` header to call `POST /api/v1/user/seed-super-admin` |
 
 ## API contracts
 

@@ -37,7 +37,7 @@ Get all users with pagination, search, and role filtering.
 **Query params:**
 | Param | Description |
 |---|---|
-| `searchTerm` | Regex search across `name` and `email` |
+| `search` | Regex search across `name` and `email` |
 | `role` | Exact filter: `admin` \| `moderator` |
 | `sortBy` | Field to sort by (default: `createdAt`) |
 | `sortOrder` | `asc` \| `desc` (default: `desc`) |
@@ -82,7 +82,12 @@ Get all users with pagination, search, and role filtering.
 
 Create the first admin user. Fails if any admin already exists.
 
-**Auth:** none
+**Auth:** none (Bearer token not required), but requires a secret header for protection.
+
+**Headers:**
+| Header | Required | Description |
+|---|---|---|
+| `X-Seed-Secret` | yes | Must match the `SEED_SECRET` environment variable. Returns `403` if missing or wrong. |
 
 **Request body:**
 ```json
@@ -125,6 +130,7 @@ Create the first admin user. Fails if any admin already exists.
 **Errors:**
 | Status | Condition |
 |---|---|
+| 403 | `X-Seed-Secret` header missing or incorrect |
 | 409 | An admin already exists, or email already in use |
 | 400 | Validation failure |
 
