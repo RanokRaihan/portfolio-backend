@@ -41,6 +41,7 @@ type TConfig = {
     fromEmail: string;
   };
   myEmail: string;
+  seedSecret: string;
   superAdmin: {
     name: string;
     email: string;
@@ -79,6 +80,7 @@ export const config: TConfig = {
     fromEmail: process.env.RESEND_FROM_EMAIL || "",
   },
   myEmail: process.env.MY_EMAIL || "ranokraihan@gmail.com",
+  seedSecret: process.env.SEED_SECRET || "",
   appUrl: {
     frontendUrl: process.env.FRONTEND_URL || "",
     backendUrl: process.env.BACKEND_URL || "",
