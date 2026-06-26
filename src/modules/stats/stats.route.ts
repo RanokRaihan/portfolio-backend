@@ -5,6 +5,11 @@ import { getStatsController } from "./stats.controller";
 
 const statsRouter = Router();
 
-statsRouter.get("/", auth, authorize(["admin"]), getStatsController);
+statsRouter.get(
+  "/",
+  auth,
+  authorize(["admin", "moderator"]),
+  getStatsController,
+);
 
 export default statsRouter;
