@@ -1,19 +1,24 @@
+import { Types } from "mongoose";
+
+export type SkillCategory =
+  | "FRONTEND"
+  | "BACKEND"
+  | "DATABASE"
+  | "DEVOPS"
+  | "LANGUAGE"
+  | "TOOL"
+  | "OTHER";
+
+export type SkillLevel = "FAMILIAR" | "PROFICIENT" | "ADVANCED" | "EXPERT";
+
 export interface ISkill {
-  _id?: string;
+  addedBy: Types.ObjectId;
   name: string;
-  description: string;
-  category:
-    | "frontend"
-    | "backend"
-    | "fullstack"
-    | "database"
-    | "devops"
-    | "tools"
-    | "other";
-  image: string;
-  proficiencyLevel?: "beginner" | "intermediate" | "advanced" | "expert";
-  yearsOfExperience?: number;
+  slug: string;
+  category: SkillCategory;
+  level: SkillLevel;
+  iconUrl?: string;
+  iconName?: string;
   featured?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  sortOrder?: number;
 }

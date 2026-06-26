@@ -10,7 +10,7 @@ export const createToken = (
   try {
     return jwt.sign(jwtPayload, secret, { expiresIn });
   } catch (error) {
-    console.log("error", error);
+    // console.log("error", error);
     throw new ApiError(
       500,
       `Token creation failed: ${(error as Error).message}`

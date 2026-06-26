@@ -1,56 +1,55 @@
 import { Router } from "express";
 import { auth } from "../../middleware/auth.middleware";
 import { authorize } from "../../middleware/authorize.middleware";
-import bodyParser from "../../middleware/bodyParser.middleware";
 import validateRequest from "../../middleware/validateRequest";
-import { upload } from "../../utils/handleImageUpload";
 import {
   createBlogController,
-  deleteBlogController,
-  getAllBlogsController,
-  getBlogByIdController,
-  getBlogsByCategoryController,
-  getBlogsByTagController,
-  getFeaturedBlogsController,
+  getAllBlogsAdminController,
+  getAllPublishedBlogsController,
+  getBlogBySlugController,
+  softDeleteBlogController,
   updateBlogController,
 } from "./blog.controller";
-import { blogUpdateValidation, blogValidation } from "./blog.validation";
+import { createBlogSchema, updateBlogSchema } from "./blog.validation";
 
 const blogRouter = Router();
 
-// Public routes
-blogRouter.get("/", getAllBlogsController);
-blogRouter.get("/featured", getFeaturedBlogsController);
-blogRouter.get("/category/:category", getBlogsByCategoryController);
-blogRouter.get("/tag/:tag", getBlogsByTagController);
-blogRouter.get("/:id", getBlogByIdController);
+// Static routes must be registered before /:slug to avoid param capture
+blogRouter.get(
+  "/all",
+  auth,
+  authorize(["admin", "moderator"]),
+  getAllBlogsAdminController,
+);
 
-// Protected routes
+// Public routes
+blogRouter.get("/", getAllPublishedBlogsController);
+
 blogRouter.post(
   "/",
   auth,
-  authorize(["admin"]),
-  upload.fields([
-    { name: "thumbnail", maxCount: 1 },
-    { name: "images", maxCount: 5 },
-  ]),
-  bodyParser,
-  validateRequest(blogValidation),
-  createBlogController
+  authorize(["admin", "moderator"]),
+  validateRequest(createBlogSchema),
+  createBlogController,
 );
 
+// Dynamic slug route — after all static GET routes
+blogRouter.get("/:slug", getBlogBySlugController);
+
+// Protected CRUD — use ObjectId-based :id (different HTTP methods, no conflict with /:slug)
 blogRouter.patch(
   "/:id",
   auth,
-  authorize(["admin"]),
-  upload.fields([
-    { name: "thumbnail", maxCount: 1 },
-    { name: "images", maxCount: 5 },
-  ]),
-  validateRequest(blogUpdateValidation),
-  updateBlogController
+  authorize(["admin", "moderator"]),
+  validateRequest(updateBlogSchema),
+  updateBlogController,
 );
 
-blogRouter.delete("/:id", auth, authorize(["admin"]), deleteBlogController);
+blogRouter.delete(
+  "/:id",
+  auth,
+  authorize(["admin", "moderator"]),
+  softDeleteBlogController,
+);
 
 export default blogRouter;

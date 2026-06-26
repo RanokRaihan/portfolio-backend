@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from "express";
 import mongoose from "mongoose";
 import { ZodError, ZodIssue } from "zod";
-import { node_env } from "../config";
+import { config } from "../config";
 import { TErrorSources } from "../interface/error.interface";
 import ApiError from "./ApiError";
 
@@ -94,6 +94,6 @@ export const globalErrorHandler: ErrorRequestHandler = (
     message,
     statusCode,
     errorSources,
-    stack: node_env === "development" ? err?.stack : null,
+    stack: config.nodeEnv === "development" ? err?.stack : null,
   });
 };

@@ -1,85 +1,92 @@
-import QueryBuilder from "../../builder/queryBuilder";
-import { IMeta } from "../../interface/global.interface";
-import { ISkill } from "./skill.interface";
+import ApiError from "../../errors/ApiError";
+import { ISkill, SkillCategory } from "./skill.interface";
 import Skill from "./skill.model";
 
-// Create a new skill
-export const createSkillService = async (payload: ISkill): Promise<ISkill> => {
-  const result = await Skill.create(payload);
-  return result;
+const generateSlug = (name: string): string =>
+  name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_]+/g, "-")
+    .replace(/--+/g, "-");
+
+const createSkillService = async (data: Omit<ISkill, "slug">) => {
+  const slug = generateSlug(data.name);
+
+  const existing = await Skill.findOne({ $or: [{ name: data.name }, { slug }] });
+  if (existing) {
+    throw new ApiError(409, "A skill with this name already exists", "createSkill");
+  }
+
+  const skill = await Skill.create({ ...data, slug });
+  return skill;
 };
 
-// Get all skills with filtering and pagination
-export const getAllSkillsService = async (query: Record<string, unknown>) => {
-  const searchableFields = ["name", "description", "category"];
-  const filterableFields = ["category", "featured", "proficiencyLevel"];
+const getAllPublicSkillsService = async (category?: string) => {
+  const filter: Record<string, unknown> = {};
 
-  const result = await Skill.find();
+  if (category) {
+    filter.category = category.toUpperCase();
+  }
 
-  return {
-    data: result,
-  };
+  const skills = await Skill.find(filter)
+    .sort({ sortOrder: 1, name: 1 })
+    .select("-addedBy");
+
+  return skills;
 };
 
-// Get all skills with filtering and pagination
-export const getAllSkillsWithFilterService = async (
-  query: Record<string, unknown>
-): Promise<{ data: ISkill[]; meta: IMeta }> => {
-  const searchableFields = ["name", "description", "category"];
-  const filterableFields = ["category", "featured", "proficiencyLevel"];
-
-  const queryBuilder = new QueryBuilder(Skill.find(), query)
-    .search(searchableFields)
-    .filter(filterableFields)
-    .sort()
-    .paginate();
-
-  const result = await queryBuilder.modelQuery;
-  const meta = await queryBuilder.countTotal();
-  console.log({ meta });
-  return {
-    data: result,
-    meta,
-  };
-};
-// Get a single skill by ID
-export const getSkillByIdService = async (
-  id: string
-): Promise<ISkill | null> => {
-  const result = await Skill.findById(id);
-  return result;
+const getSkillByIdService = async (id: string) => {
+  const skill = await Skill.findById(id).select("-addedBy");
+  if (!skill) {
+    throw new ApiError(404, "Skill not found", "getSkillById");
+  }
+  return skill;
 };
 
-// Update a skill
-export const updateSkillService = async (
+const updateSkillService = async (
   id: string,
-  payload: Partial<ISkill>
-): Promise<ISkill | null> => {
-  const result = await Skill.findByIdAndUpdate(id, payload, {
+  data: Partial<Omit<ISkill, "addedBy">>,
+) => {
+  const updatePayload: Record<string, unknown> = { ...data };
+
+  if (data.name) {
+    const newSlug = generateSlug(data.name);
+
+    const conflict = await Skill.findOne({
+      $or: [{ name: data.name }, { slug: newSlug }],
+      _id: { $ne: id },
+    });
+    if (conflict) {
+      throw new ApiError(409, "A skill with this name already exists", "updateSkill");
+    }
+
+    updatePayload.slug = newSlug;
+  }
+
+  const skill = await Skill.findByIdAndUpdate(id, updatePayload, {
     new: true,
     runValidators: true,
   });
-  return result;
+
+  if (!skill) {
+    throw new ApiError(404, "Skill not found", "updateSkill");
+  }
+  return skill;
 };
 
-// Delete a skill
-export const deleteSkillService = async (
-  id: string
-): Promise<ISkill | null> => {
-  const result = await Skill.findByIdAndDelete(id);
-  return result;
+const deleteSkillService = async (id: string) => {
+  const skill = await Skill.findByIdAndDelete(id);
+  if (!skill) {
+    throw new ApiError(404, "Skill not found", "deleteSkill");
+  }
+  return { _id: skill._id, name: skill.name };
 };
 
-// Get featured skills
-export const getFeaturedSkillsService = async (): Promise<ISkill[]> => {
-  const result = await Skill.find({ featured: true }).sort({ createdAt: -1 });
-  return result;
-};
-
-// Get skills by category
-export const getSkillsByCategoryService = async (
-  category: string
-): Promise<ISkill[]> => {
-  const result = await Skill.find({ category }).sort({ createdAt: -1 });
-  return result;
+export {
+  createSkillService,
+  deleteSkillService,
+  getAllPublicSkillsService,
+  getSkillByIdService,
+  updateSkillService,
 };

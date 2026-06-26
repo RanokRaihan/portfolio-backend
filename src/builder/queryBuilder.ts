@@ -13,18 +13,21 @@ class QueryBuilder<T> {
   search(searchableFields: string[]) {
     const searchTerm = this.query.search;
     if (searchTerm) {
+      const escaped = String(searchTerm).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       this.modelQuery = this.modelQuery.find({
         $or: searchableFields.map((field) => ({
-          [field]: { $regex: searchTerm, $options: "i" },
+          [field]: { $regex: escaped, $options: "i" },
         })),
       });
     }
     return this;
   }
 
-  // Applies sorting based on query parameters.
-  sort() {
-    const sortBy = this.query.sortBy || "createdAt";
+  // Applies sorting based on query parameters. Pass allowedFields to restrict sortable columns.
+  sort(allowedFields?: string[]) {
+    const requested = this.query.sortBy || "createdAt";
+    const sortBy =
+      allowedFields && !allowedFields.includes(requested) ? "createdAt" : requested;
     const sortOrder = this.query.sortOrder === "desc" ? -1 : 1;
     this.modelQuery = this.modelQuery.sort({ [sortBy]: sortOrder });
     return this;
@@ -43,10 +46,11 @@ class QueryBuilder<T> {
     return this;
   }
 
-  // Applies pagination based on query parameters.
+  // Applies pagination based on query parameters. Limit is capped at 100.
   paginate() {
     const page = parseInt(this?.query?.page, 10) || 1;
-    const limit = parseInt(this?.query?.limit, 10) || 10;
+    const rawLimit = parseInt(this?.query?.limit, 10) || 10;
+    const limit = Math.min(rawLimit, 100);
     const skip = (page - 1) * limit;
 
     this.modelQuery = this.modelQuery.skip(skip).limit(limit);
@@ -57,7 +61,8 @@ class QueryBuilder<T> {
     const totalQueries = this.modelQuery.getFilter();
     const total = await this.modelQuery.model.countDocuments(totalQueries);
     const page = Number(this?.query?.page) || 1;
-    const limit = Number(this?.query?.limit) || 10;
+    const rawLimit = Number(this?.query?.limit) || 10;
+    const limit = Math.min(rawLimit, 100);
     const totalPage = Math.ceil(total / limit);
 
     return {

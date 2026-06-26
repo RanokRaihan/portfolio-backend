@@ -1,50 +1,44 @@
 import { Router } from "express";
 import { auth } from "../../middleware/auth.middleware";
 import { authorize } from "../../middleware/authorize.middleware";
-import bodyParser from "../../middleware/bodyParser.middleware";
 import validateRequest from "../../middleware/validateRequest";
-import { upload } from "../../utils/handleImageUpload";
 import {
   createSkillController,
   deleteSkillController,
-  getAllSkillsController,
-  getAllSkillsWithFilterController,
-  getFeaturedSkillsController,
+  getAllPublicSkillsController,
   getSkillByIdController,
-  getSkillsByCategoryController,
   updateSkillController,
 } from "./skill.controller";
-import { skillValidationSchema } from "./skill.validation";
+import { createSkillSchema, updateSkillSchema } from "./skill.validation";
 
-const router = Router();
+const skillRouter = Router();
 
-// Public routes - accessible to everyone
-router.get("/", getAllSkillsController);
-router.get("/paginate", getAllSkillsWithFilterController);
-
-router.get("/featured", getFeaturedSkillsController);
-router.get("/category/:category", getSkillsByCategoryController);
-router.get("/:id", getSkillByIdController);
-
-// Protected routes - only accessible to authenticated users
-
-router.post(
+// Protected routes
+skillRouter.post(
   "/",
   auth,
-  authorize(["admin"]),
-  upload.single("image"),
-  bodyParser,
-  validateRequest(skillValidationSchema),
-  createSkillController
+  authorize(["admin", "moderator"]),
+  validateRequest(createSkillSchema),
+  createSkillController,
 );
 
-router.patch(
+skillRouter.patch(
   "/:id",
   auth,
-  authorize(["admin"]),
-  validateRequest(skillValidationSchema),
-  updateSkillController
+  authorize(["admin", "moderator"]),
+  validateRequest(updateSkillSchema),
+  updateSkillController,
 );
-router.delete("/:id", auth, authorize(["admin"]), deleteSkillController);
 
-export default router;
+skillRouter.delete(
+  "/:id",
+  auth,
+  authorize(["admin", "moderator"]),
+  deleteSkillController,
+);
+
+// Public routes
+skillRouter.get("/", getAllPublicSkillsController);
+skillRouter.get("/:id", getSkillByIdController);
+
+export default skillRouter;

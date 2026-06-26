@@ -1,11 +1,11 @@
 import app from "./app";
-import { port } from "./config";
+import { config } from "./config";
 import { connectDB } from "./db";
 
 connectDB()
   .then(() => {
-    app.listen(port || 3000, () => {
-      console.log(`Server running on port ${port}`);
+    app.listen(config.port || 3000, () => {
+      console.log(`Server running on port ${config.port}`);
     });
   })
   .catch((err) => {

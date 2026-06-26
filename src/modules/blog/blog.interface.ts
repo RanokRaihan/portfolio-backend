@@ -1,24 +1,23 @@
+import { Types } from "mongoose";
+
+export type TBlogStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+
 export interface IBlog {
-  _id?: string;
+  addedBy: Types.ObjectId;
   title: string;
+  slug: string;
   summary: string;
   content: string;
-  thumbnail: string;
-  category: string;
-  tags: string[];
-  author?: string;
+  coverImage?: string;
+  tags?: string[];
+  status?: TBlogStatus;
+  views?: number;
   readTime?: number;
-  isFeatured?: boolean;
-  status: "draft" | "published";
-  images?: string[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImage?: string;
+  featured?: boolean;
+  publishedAt?: Date;
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
-
-export type IBlogFilters = {
-  searchTerm?: string;
-  category?: string;
-  tag?: string;
-  status?: string;
-  isFeatured?: boolean;
-};

@@ -1,13 +1,206 @@
+import crypto from "crypto";
+import QueryBuilder from "../../builder/queryBuilder";
+import { config } from "../../config";
+import ApiError from "../../errors/ApiError";
+import { resend } from "../../lib/resend";
+import { IMeta } from "../../interface/global.interface";
+import { welcomeEmailTemplate } from "../../utils/emailTemplates";
 import { IUser } from "./user.interface";
 import User from "./user.model";
 
+const generateTemporaryPassword = (): string => {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return Array.from(crypto.randomBytes(10))
+    .map((b) => chars[b % chars.length])
+    .join("");
+};
+
 export const findUserWithEmailService = async (email: string) => {
-  const user = await User.findOne({ email });
+  try {
+    const user = await User.findOne({ email, isDeleted: false });
+    return user;
+  } catch (error) {
+    console.error("Error finding user with email:", error);
+    throw new ApiError(
+      500,
+      "Failed to find user with email",
+      "findUserWithEmail",
+    );
+  }
+};
+
+const SAFE_USER_FIELDS =
+  "-password -refreshToken -passwordResetToken -passwordResetTokenExpires -emailVerificationToken -emailVerificationTokenExpires";
+
+export const getMeService = async (userId: string) => {
+  const user = await User.findById(userId).select(SAFE_USER_FIELDS);
+  if (!user) {
+    throw new ApiError(404, "User not found", "getMe");
+  }
   return user;
 };
 
-//create a user with the given data
-export const createUserService = async (data: IUser) => {
-  const user = await User.create(data);
+export const getUserByIdService = async (id: string) => {
+  const user = await User.findOne({ _id: id, isDeleted: false }).select(
+    SAFE_USER_FIELDS,
+  );
+  if (!user) {
+    throw new ApiError(404, "User not found", "getUserById");
+  }
   return user;
+};
+
+export const updateUserStatusService = async (
+  id: string,
+  isActive: boolean,
+) => {
+  const user = await User.findByIdAndUpdate(
+    id,
+    { isActive },
+    { new: true },
+  ).select("_id name email role isActive");
+  if (!user) {
+    throw new ApiError(404, "User not found", "updateUserStatus");
+  }
+  return user;
+};
+
+export const updateUserRoleService = async (id: string, role: string) => {
+  const user = await User.findByIdAndUpdate(id, { role }, { new: true }).select(
+    "_id name email role isActive",
+  );
+  if (!user) {
+    throw new ApiError(404, "User not found", "updateUserRole");
+  }
+  return user;
+};
+
+export const deleteUserService = async (id: string) => {
+  const user = await User.findByIdAndUpdate(
+    id,
+    { isDeleted: true, isActive: false },
+    { new: true },
+  ).select("_id name email");
+  if (!user) {
+    throw new ApiError(404, "User not found", "deleteUser");
+  }
+  return user;
+};
+
+export const getAllUsersService = async (
+  query: Record<string, unknown>,
+): Promise<{ data: unknown[]; meta: IMeta }> => {
+  const queryBuilder = new QueryBuilder(User.find(), query)
+    .search(["name", "email"])
+    .filter(["role"])
+    .sort()
+    .paginate();
+
+  const data = await queryBuilder.modelQuery.select(SAFE_USER_FIELDS);
+  const meta = await queryBuilder.countTotal();
+  return { data, meta };
+};
+
+export const seedSuperAdminService = async (data: IUser) => {
+  const existing = await User.findOne({ role: "admin" });
+  if (existing) {
+    throw new ApiError(409, "Admin already exists", "seedSuperAdmin");
+  }
+
+  const emailTaken = await User.findOne({ email: data.email });
+  if (emailTaken) {
+    throw new ApiError(409, "Email is already in use", "seedSuperAdmin");
+  }
+
+  const user = await User.create({ ...data, role: "admin" });
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    dateOfBirth: user.dateOfBirth,
+    gender: user.gender,
+    address: user.address,
+    phone: user.phone,
+    role: user.role,
+  };
+};
+
+export const updateAvatarService = async (userId: string, image: string) => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { image },
+    { new: true, runValidators: true },
+  ).select("_id name email image");
+
+  if (!user) {
+    throw new ApiError(404, "User not found", "updateAvatar");
+  }
+
+  return user;
+};
+
+export const updateUserService = async (
+  userId: string,
+  data: Partial<
+    Pick<IUser, "name" | "dateOfBirth" | "gender" | "address" | "phone">
+  >,
+) => {
+  const user = await User.findByIdAndUpdate(userId, data, {
+    new: true,
+    runValidators: true,
+  }).select("_id name email dateOfBirth gender address phone role");
+
+  if (!user) {
+    throw new ApiError(404, "User not found", "updateUser");
+  }
+
+  return user;
+};
+
+export const createUserService = async (
+  data: Omit<IUser, "password" | "role">,
+) => {
+  const temporaryPassword = generateTemporaryPassword();
+
+  const user = await User.create({
+    ...data,
+    password: temporaryPassword,
+    needPasswordChange: true,
+  });
+
+  const loginUrl = `${config.appUrl.frontendUrl}/login`;
+  const html = welcomeEmailTemplate(
+    user.name,
+    user.email,
+    temporaryPassword,
+    loginUrl,
+  );
+
+  const { error } = await resend.emails.send({
+    from: config.resend.fromEmail,
+    to: user.email,
+    subject: "Your account has been created — login details inside",
+    html,
+  });
+
+  if (error) {
+    await User.findByIdAndDelete(user._id);
+    throw new ApiError(
+      500,
+      "Failed to send welcome email. User creation rolled back.",
+      "userCreation",
+    );
+  }
+
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    dateOfBirth: user.dateOfBirth,
+    gender: user.gender,
+    address: user.address,
+    phone: user.phone,
+    role: user.role,
+  };
 };
