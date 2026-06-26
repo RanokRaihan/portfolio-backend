@@ -1,0 +1,1142 @@
+{
+  "info": {
+    "name": "Remodel Portfolio API",
+    "_postman_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "description": "Complete API collection for the portfolio backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "project_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "skill_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "education_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "certification_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "blog_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "blog_slug",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "message_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testimonial_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh-token",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"oldpassword123\",\n  \"newPassword\": \"newpassword123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "change-password"]
+            }
+          }
+        },
+        {
+          "name": "Send Verification Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/send-verification-email",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "send-verification-email"]
+            }
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<email-verification-token>\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-email"]
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "forgot-password"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<password-reset-token>\",\n  \"newPassword\": \"newpassword123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset-password"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Seed Super Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Super Admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"gender\": \"male\",\n  \"address\": \"123 Main Street, Dhaka\",\n  \"phone\": \"+8801700000000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/seed-super-admin",
+              "host": ["{{base_url}}"],
+              "path": ["user", "seed-super-admin"]
+            }
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user/me",
+              "host": ["{{base_url}}"],
+              "path": ["user", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"+8801711111111\",\n  \"address\": \"456 New Street, Dhaka\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/me",
+              "host": ["{{base_url}}"],
+              "path": ["user", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update My Avatar",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image\": \"https://example.com/avatar.png\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/me/avatar",
+              "host": ["{{base_url}}"],
+              "path": ["user", "me", "avatar"]
+            }
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["user"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "role", "value": "moderator", "disabled": true },
+                { "key": "sortBy", "value": "createdAt", "disabled": true },
+                { "key": "sortOrder", "value": "desc", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"dateOfBirth\": \"1995-06-15\",\n  \"gender\": \"female\",\n  \"address\": \"789 Side Street, Dhaka\",\n  \"phone\": \"+8801722222222\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/create-user",
+              "host": ["{{base_url}}"],
+              "path": ["user", "create-user"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["user", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/{{user_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["user", "{{user_id}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"moderator\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/user/{{user_id}}/role",
+              "host": ["{{base_url}}"],
+              "path": ["user", "{{user_id}}", "role"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["user", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Get All Published Projects",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/project?page=1&limit=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["project"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "10" },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "category", "value": "BACKEND", "disabled": true },
+                    { "key": "type", "value": "PERSONAL", "disabled": true },
+                    { "key": "complexity", "value": "INTERMEDIATE", "disabled": true },
+                    { "key": "featured", "value": "true", "disabled": true },
+                    { "key": "isFeaturedOnHome", "value": "true", "disabled": true },
+                    { "key": "sortBy", "value": "createdAt", "disabled": true },
+                    { "key": "sortOrder", "value": "desc", "disabled": true }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Published Project by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/project/{{project_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["project", "{{project_id}}"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Protected",
+          "item": [
+            {
+              "name": "Create Project",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"My Portfolio Backend\",\n  \"tagline\": \"A RESTful API for my developer portfolio\",\n  \"summary\": \"Full-featured backend with auth, projects, and more built with Express and MongoDB.\",\n  \"description\": \"This is a detailed description of the project that is at least fifty characters long and covers key points.\",\n  \"category\": \"BACKEND\",\n  \"type\": \"PERSONAL\",\n  \"complexity\": \"INTERMEDIATE\",\n  \"myRole\": \"Solo Developer\",\n  \"techStack\": {\n    \"backend\": [\"Node.js\", \"Express\", \"TypeScript\"],\n    \"database\": [\"MongoDB\", \"Mongoose\"]\n  },\n  \"tags\": [\"api\", \"portfolio\", \"typescript\"],\n  \"status\": \"DRAFT\",\n  \"backendRepoUrl\": \"https://github.com/user/repo\",\n  \"backendLiveUrl\": \"https://api.example.com\",\n  \"startedAt\": \"2024-01-01T00:00:00.000Z\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/project",
+                  "host": ["{{base_url}}"],
+                  "path": ["project"]
+                }
+              }
+            },
+            {
+              "name": "Get All Projects (Manage)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/project/manage?page=1&limit=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["project", "manage"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "10" },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "status", "value": "DRAFT", "disabled": true },
+                    { "key": "category", "value": "BACKEND", "disabled": true },
+                    { "key": "type", "value": "PERSONAL", "disabled": true },
+                    { "key": "complexity", "value": "INTERMEDIATE", "disabled": true },
+                    { "key": "featured", "value": "true", "disabled": true },
+                    { "key": "sortBy", "value": "createdAt", "disabled": true },
+                    { "key": "sortOrder", "value": "desc", "disabled": true }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Project by ID (Manage)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/project/manage/{{project_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["project", "manage", "{{project_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Update Project",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Updated Project Title\",\n  \"featured\": true,\n  \"techStack\": {\n    \"backend\": [\"Node.js\", \"Express\", \"TypeScript\"],\n    \"database\": [\"MongoDB\"]\n  }\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/project/{{project_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["project", "{{project_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Change Project Status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"PUBLISHED\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/project/{{project_id}}/status",
+                  "host": ["{{base_url}}"],
+                  "path": ["project", "{{project_id}}", "status"]
+                }
+              }
+            },
+            {
+              "name": "Delete Project (Soft)",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/project/{{project_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["project", "{{project_id}}"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Skill",
+      "item": [
+        {
+          "name": "Get All Skills",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/skill",
+              "host": ["{{base_url}}"],
+              "path": ["skill"],
+              "query": [
+                { "key": "category", "value": "LANGUAGE", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Skill",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"TypeScript\",\n  \"category\": \"LANGUAGE\",\n  \"level\": \"ADVANCED\",\n  \"iconUrl\": \"https://cdn.example.com/icons/typescript.svg\",\n  \"iconName\": \"typescript\",\n  \"featured\": true,\n  \"sortOrder\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/skill",
+              "host": ["{{base_url}}"],
+              "path": ["skill"]
+            }
+          }
+        },
+        {
+          "name": "Update Skill",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level\": \"EXPERT\",\n  \"featured\": true,\n  \"sortOrder\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/skill/{{skill_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["skill", "{{skill_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Skill",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/skill/{{skill_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["skill", "{{skill_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Education",
+      "item": [
+        {
+          "name": "Get All Education Records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/education",
+              "host": ["{{base_url}}"],
+              "path": ["education"]
+            }
+          }
+        },
+        {
+          "name": "Create Education Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"institution\": \"University of Dhaka\",\n  \"startDate\": \"2019-01-01\",\n  \"degree\": \"Bachelor of Science\",\n  \"field\": \"Computer Science\",\n  \"description\": \"Graduated with distinction.\",\n  \"logoUrl\": \"https://cdn.example.com/logos/du.png\",\n  \"location\": \"Dhaka, Bangladesh\",\n  \"isCurrent\": false,\n  \"endDate\": \"2023-01-01\",\n  \"featured\": true,\n  \"sortOrder\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/education",
+              "host": ["{{base_url}}"],
+              "path": ["education"]
+            }
+          }
+        },
+        {
+          "name": "Update Education Record",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isCurrent\": true,\n  \"description\": \"Updated description.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/education/{{education_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["education", "{{education_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Education Record (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/education/{{education_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["education", "{{education_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Certification",
+      "item": [
+        {
+          "name": "Get All Certifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/certification",
+              "host": ["{{base_url}}"],
+              "path": ["certification"]
+            }
+          }
+        },
+        {
+          "name": "Create Certification",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AWS Certified Developer – Associate\",\n  \"issuer\": \"Amazon Web Services\",\n  \"issuedAt\": \"2024-03-15\",\n  \"issuerLogoUrl\": \"https://cdn.example.com/logos/aws.png\",\n  \"credentialId\": \"ABC123XYZ\",\n  \"credentialUrl\": \"https://aws.amazon.com/verify/ABC123XYZ\",\n  \"certificateUrl\": \"https://cdn.example.com/certs/aws-dev.pdf\",\n  \"badgeUrl\": \"https://cdn.example.com/badges/aws-dev.png\",\n  \"isExpired\": false,\n  \"isLifetime\": false,\n  \"expiresAt\": \"2027-03-15\",\n  \"courseStartDate\": \"2024-01-01\",\n  \"courseEndDate\": \"2024-03-01\",\n  \"featured\": true,\n  \"sortOrder\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/certification",
+              "host": ["{{base_url}}"],
+              "path": ["certification"]
+            }
+          }
+        },
+        {
+          "name": "Update Certification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isExpired\": true,\n  \"featured\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/certification/{{certification_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["certification", "{{certification_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Certification (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/certification/{{certification_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["certification", "{{certification_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Blog",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Get All Published Blogs",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/blog?page=1&limit=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "10" },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "sortBy", "value": "createdAt", "disabled": true },
+                    { "key": "sortOrder", "value": "desc", "disabled": true }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Published Blog by Slug",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/blog/{{blog_slug}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog", "{{blog_slug}}"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Protected",
+          "item": [
+            {
+              "name": "Get All Blogs (Admin)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/blog/all?page=1&limit=10",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog", "all"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "10" },
+                    { "key": "status", "value": "DRAFT", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "sortBy", "value": "createdAt", "disabled": true },
+                    { "key": "sortOrder", "value": "desc", "disabled": true }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Blog",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Getting Started with TypeScript\",\n  \"summary\": \"A beginner-friendly intro to TypeScript...\",\n  \"content\": \"# Getting Started\\n\\nTypeScript is a typed superset of JavaScript...\",\n  \"coverImage\": \"https://example.com/cover.jpg\",\n  \"tags\": [\"typescript\", \"javascript\"],\n  \"status\": \"DRAFT\",\n  \"metaTitle\": \"Getting Started with TypeScript | Ranok Raihan\",\n  \"metaDescription\": \"Learn the basics of TypeScript...\",\n  \"ogImage\": \"https://example.com/og.jpg\",\n  \"featured\": false\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/blog",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog"]
+                }
+              }
+            },
+            {
+              "name": "Update Blog",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"PUBLISHED\",\n  \"featured\": true,\n  \"metaTitle\": \"Updated SEO title\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/blog/{{blog_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog", "{{blog_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Delete Blog (Soft)",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{access_token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/blog/{{blog_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["blog", "{{blog_id}}"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Message",
+      "item": [
+        {
+          "name": "Submit Message (Public)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"subject\": \"Collaboration opportunity\",\n  \"message\": \"Hi, I'd love to work with you on a project!\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/message",
+              "host": ["{{base_url}}"],
+              "path": ["message"]
+            }
+          }
+        },
+        {
+          "name": "Get All Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/message?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["message"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "UNREAD", "disabled": true },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "sortBy", "value": "createdAt", "disabled": true },
+                { "key": "sortOrder", "value": "desc", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Message by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/message/{{message_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["message", "{{message_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Message Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"REPLIED\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/message/{{message_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["message", "{{message_id}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete Message",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/message/{{message_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["message", "{{message_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Testimonial",
+      "item": [
+        {
+          "name": "Get All Testimonials",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/testimonial?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "featured", "value": "true", "disabled": true },
+                { "key": "relation", "value": "PEER", "disabled": true },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "sortBy", "value": "createdAt", "disabled": true },
+                { "key": "sortOrder", "value": "asc", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Testimonial by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/testimonial/{{testimonial_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial", "{{testimonial_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Testimonial",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"role\": \"Senior Engineer at Google\",\n  \"company\": \"Google\",\n  \"avatar\": \"https://example.com/avatar.jpg\",\n  \"linkedIn\": \"https://linkedin.com/in/janesmith\",\n  \"quote\": \"Working with Ranok was an exceptional experience that I highly recommend.\",\n  \"relation\": \"PEER\",\n  \"featured\": true,\n  \"sortOrder\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/testimonial",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial"]
+            }
+          }
+        },
+        {
+          "name": "Update Testimonial",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote\": \"Updated testimonial text that reflects a great collaboration.\",\n  \"featured\": false,\n  \"sortOrder\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/testimonial/{{testimonial_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial", "{{testimonial_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Testimonial (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/testimonial/{{testimonial_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["testimonial", "{{testimonial_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Setting",
+      "item": [
+        {
+          "name": "Get Site Settings (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/setting",
+              "host": ["{{base_url}}"],
+              "path": ["setting"]
+            }
+          }
+        },
+        {
+          "name": "Get Site Settings (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/setting/admin",
+              "host": ["{{base_url}}"],
+              "path": ["setting", "admin"]
+            }
+          }
+        },
+        {
+          "name": "Create Site Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ranok Raihan\",\n  \"title\": \"Full Stack Developer\",\n  \"bio\": \"I build scalable web applications.\",\n  \"avatar\": \"https://cdn.example.com/avatar.png\",\n  \"resumeUrl\": \"https://cdn.example.com/resume.pdf\",\n  \"openToWork\": true,\n  \"availableFrom\": \"2026-06-01\",\n  \"socials\": {\n    \"github\": \"https://github.com/ranokraihan\",\n    \"linkedin\": \"https://linkedin.com/in/ranokraihan\",\n    \"twitter\": \"https://twitter.com/ranokraihan\",\n    \"devTo\": \"https://dev.to/ranokraihan\",\n    \"youtube\": \"https://youtube.com/@ranokraihan\",\n    \"email\": \"ranok@example.com\"\n  },\n  \"metaTitle\": \"Ranok Raihan – Full Stack Developer\",\n  \"metaDescription\": \"Portfolio of Ranok Raihan, Full Stack Developer.\",\n  \"ogImage\": \"https://cdn.example.com/og.png\",\n  \"footerText\": \"© 2026 Ranok Raihan. All rights reserved.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/setting",
+              "host": ["{{base_url}}"],
+              "path": ["setting"]
+            }
+          }
+        },
+        {
+          "name": "Update Site Settings",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"openToWork\": false,\n  \"socials\": {\n    \"github\": \"https://github.com/ranokraihan-new\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/setting",
+              "host": ["{{base_url}}"],
+              "path": ["setting"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

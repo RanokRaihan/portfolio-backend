@@ -1,29 +1,86 @@
 import dotenv from "dotenv";
 
-// congigure dotenv
 dotenv.config();
 
-// export environment variables
-export const {
-  NODE_ENV: node_env,
-  MONGODB_URI: mongodb_uri,
-  PORT: port,
-  BCRYPT_SALT_ROUNDS: bcrypt_salt_rounds,
-  DB_NAME: db_name,
-  JWT_ACCESS_SECRET: jwt_access_secret,
-  JWT_REFRESH_SECRET: jwt_refresh_secret,
+// Fail fast if critical secrets are missing — prevents silent startup with insecure defaults
+const requiredEnvVars = [
+  "MONGODB_URI",
+  "DB_NAME",
+  "JWT_ACCESS_SECRET",
+  "JWT_REFRESH_SECRET",
+  "RESEND_API_KEY",
+  "RESEND_FROM_EMAIL",
+] as const;
 
-  JWT_ACCESS_EXPIRES_IN: jwt_expires_in,
-  JWT_REFRESH_EXPIRES_IN: jwt_refresh_expires_in,
-  RESET_PASS_UI_LINK: reset_pass_ui_link,
-  CLOUDINARY_CLOUD_NAME: cloudinary_cloud_name,
-  CLOUDINARY_API_KEY: cloudinary_api_key,
-  CLOUDINARY_API_SECRET: cloudinary_api_secret,
+const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key]);
+if (missingEnvVars.length > 0) {
+  throw new Error(
+    `Missing required environment variables: ${missingEnvVars.join(", ")}`,
+  );
+}
 
-  SP_ENDPOINT: sp_endpoint,
-  SP_USERNAME: sp_username,
-  SP_PASSWORD: sp_password,
+type TConfig = {
+  nodeEnv: string;
+  port: string;
+  db: {
+    uri: string;
+    name: string;
+  };
+  jwt: {
+    accessSecret: string;
+    refreshSecret: string;
+    accessExpiresIn: string;
+    refreshExpiresIn: string;
+  };
+  bcrypt: {
+    saltRounds: string;
+  };
+  resetPassUiLink: string;
+  resend: {
+    apiKey: string;
+    fromEmail: string;
+  };
+  myEmail: string;
+  superAdmin: {
+    name: string;
+    email: string;
+    password: string;
+  };
+  appUrl: {
+    frontendUrl: string;
+    backendUrl: string;
+  };
+};
 
-  SP_PREFIX: sp_prefix,
-  SP_RETURN_URL: sp_return_url,
-} = process.env;
+export const config: TConfig = {
+  nodeEnv: process.env.NODE_ENV || "development",
+  port: process.env.PORT || "5000",
+  db: {
+    uri: process.env.MONGODB_URI || "",
+    name: process.env.DB_NAME || "",
+  },
+  jwt: {
+    accessSecret: process.env.JWT_ACCESS_SECRET || "",
+    refreshSecret: process.env.JWT_REFRESH_SECRET || "",
+    accessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || "15m",
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
+  },
+  bcrypt: {
+    saltRounds: process.env.BCRYPT_SALT_ROUNDS || "10",
+  },
+  resetPassUiLink: process.env.RESET_PASS_UI_LINK || "",
+  superAdmin: {
+    name: process.env.SUPER_ADMIN_NAME || "",
+    email: process.env.SUPER_ADMIN_EMAIL || "",
+    password: process.env.SUPER_ADMIN_PASSWORD || "",
+  },
+  resend: {
+    apiKey: process.env.RESEND_API_KEY || "",
+    fromEmail: process.env.RESEND_FROM_EMAIL || "",
+  },
+  myEmail: process.env.MY_EMAIL || "ranokraihan@gmail.com",
+  appUrl: {
+    frontendUrl: process.env.FRONTEND_URL || "",
+    backendUrl: process.env.BACKEND_URL || "",
+  },
+};

@@ -1,43 +1,93 @@
-import { Schema, model } from "mongoose";
-import { ISkill } from "./skill.interface";
+import mongoose, { Schema } from "mongoose";
+import { ISkill, SkillCategory, SkillLevel } from "./skill.interface";
+
+const SKILL_CATEGORIES: SkillCategory[] = [
+  "FRONTEND",
+  "BACKEND",
+  "DATABASE",
+  "DEVOPS",
+  "LANGUAGE",
+  "TOOL",
+  "OTHER",
+];
+
+const SKILL_LEVELS: SkillLevel[] = [
+  "FAMILIAR",
+  "PROFICIENT",
+  "ADVANCED",
+  "EXPERT",
+];
 
 const skillSchema = new Schema<ISkill>(
   {
-    name: { type: String, required: true },
-    description: { type: String, required: true },
-    category: {
+    addedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    name: { type: String, required: true, unique: true, trim: true },
+    slug: {
       type: String,
       required: true,
-      enum: [
-        "frontend",
-        "backend",
-        "fullstack",
-        "database",
-        "devops",
-        "tools",
-        "other",
-      ],
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
-    image: { type: String, required: true },
-    proficiencyLevel: {
+    category: {
       type: String,
-      enum: ["beginner", "intermediate", "advanced", "expert"],
-      default: "beginner",
+      enum: SKILL_CATEGORIES,
+      required: true,
     },
-    yearsOfExperience: { type: Number, required: true },
+    level: {
+      type: String,
+      enum: SKILL_LEVELS,
+      required: true,
+    },
+    iconUrl: { type: String },
+    iconName: { type: String },
+
     featured: { type: Boolean, default: false },
+    sortOrder: { type: Number, default: 0 },
   },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
+  { timestamps: true },
 );
 
-// Create indexes for faster queries
-skillSchema.index({ name: 1 });
-skillSchema.index({ category: 1 });
+skillSchema.pre("validate", async function (next) {
+  if (!this.isModified("name") || this.slug) return next();
+
+  const baseSlug = this.name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_]+/g, "-")
+    .replace(/--+/g, "-");
+
+  // Escape any regex metacharacters in the base slug before embedding in a pattern
+  const escaped = baseSlug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  const existing = await mongoose.model("Skill").distinct("slug", {
+    slug: { $regex: `^${escaped}(-\\d+)?$` },
+    _id: { $ne: this._id },
+  });
+
+  if (!existing.includes(baseSlug)) {
+    this.slug = baseSlug;
+    return next();
+  }
+
+  const maxSuffix = existing.reduce((max, s: string) => {
+    const match = s.match(new RegExp(`^${escaped}-(\\d+)$`));
+    return match ? Math.max(max, parseInt(match[1], 10)) : max;
+  }, 0);
+
+  this.slug = `${baseSlug}-${maxSuffix + 1}`;
+  next();
+});
+
+skillSchema.index({ category: 1, sortOrder: 1 });
 skillSchema.index({ featured: 1 });
 
-const Skill = model<ISkill>("Skill", skillSchema);
+const Skill = mongoose.model<ISkill>("Skill", skillSchema);
 
 export default Skill;
