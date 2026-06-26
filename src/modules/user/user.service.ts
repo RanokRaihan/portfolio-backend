@@ -2,8 +2,8 @@ import crypto from "crypto";
 import QueryBuilder from "../../builder/queryBuilder";
 import { config } from "../../config";
 import ApiError from "../../errors/ApiError";
-import { resend } from "../../lib/resend";
 import { IMeta } from "../../interface/global.interface";
+import { resend } from "../../lib/resend";
 import { welcomeEmailTemplate } from "../../utils/emailTemplates";
 import { IUser } from "./user.interface";
 import User from "./user.model";
@@ -113,7 +113,13 @@ export const seedSuperAdminService = async (data: IUser) => {
     throw new ApiError(409, "Email is already in use", "seedSuperAdmin");
   }
 
-  const user = await User.create({ ...data, role: "admin" });
+  const user = await User.create({
+    ...data,
+    role: "admin",
+    emailVerified: true,
+    needPasswordChange: false,
+    emailVerifiedAt: new Date(),
+  });
   return {
     _id: user._id,
     name: user.name,
