@@ -4,7 +4,7 @@
 
 Returns aggregated counts and breakdowns across all portfolio modules for the admin dashboard.
 
-**Auth:** Required — `admin` role only.
+**Auth:** Required — `admin` or `moderator`.
 
 ### Response `200`
 
@@ -98,4 +98,4 @@ Returns aggregated counts and breakdowns across all portfolio modules for the ad
 | Status | Condition |
 |--------|-----------|
 | `401`  | No token / invalid token |
-| `403`  | Authenticated but not `admin` role |
+| `401`  | Authenticated but not `admin` or `moderator` role |

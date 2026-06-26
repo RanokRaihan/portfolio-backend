@@ -103,7 +103,44 @@ Content-Type: application/json
 | `complexity`  | enum     | `BEGINNER` `INTERMEDIATE` `ADVANCED`                                |
 | `myRole`      | string   | 2–100 chars                                                         |
 | `coverImage`  | string   | valid URL                                                           |
-| `ogImage`     | string   | valid URL                                                           |
+
+### Optional fields
+
+| Field              | Type     | Notes                                              |
+|--------------------|----------|----------------------------------------------------|
+| `ogImage`          | string   | valid URL                                          |
+| `slug`             | string   | auto-generated from title if omitted; lowercase kebab-case, 3–120 chars |
+| `highlights`       | array    | array of strings, max 10 items                     |
+| `challenges`       | string   | max 1000 chars                                     |
+| `lessons`          | string   | max 1000 chars                                     |
+| `techStack`        | object   | keys: `frontend`, `backend`, `database`, `devops`, `other` (each array of strings) |
+| `thumbnailImage`   | string   | valid URL                                          |
+| `images`           | array    | array of URLs, max 10 items                        |
+| `videoUrl`         | string   | valid URL                                          |
+| `demoGifUrl`       | string   | valid URL                                          |
+| `tags`             | array    | array of strings, each 1–30 chars, max 20 items    |
+| `status`           | enum     | `DRAFT` `PUBLISHED` `ARCHIVED` `IN_PROGRESS` `COMING_SOON` (default `DRAFT`) |
+| `frontendLiveUrl`  | string   | valid URL                                          |
+| `backendLiveUrl`   | string   | valid URL                                          |
+| `frontendRepoUrl`  | string   | valid URL                                          |
+| `backendRepoUrl`   | string   | valid URL                                          |
+| `caseStudyUrl`     | string   | valid URL                                          |
+| `npmUrl`           | string   | valid URL                                          |
+| `devToUrl`         | string   | valid URL                                          |
+| `figmaUrl`         | string   | valid URL                                          |
+| `linesOfCode`      | number   | non-negative integer                               |
+| `githubStars`      | number   | non-negative integer                               |
+| `npmDownloads`     | number   | non-negative integer                               |
+| `activeUsers`      | number   | non-negative integer                               |
+| `teamSize`         | number   | integer 1–100                                      |
+| `contributors`     | array    | array of strings                                   |
+| `metaTitle`        | string   | max 70 chars                                       |
+| `metaDescription`  | string   | max 160 chars                                      |
+| `featured`         | boolean  | default `false`                                    |
+| `sortOrder`        | number   | non-negative integer, default `0`                  |
+| `isFeaturedOnHome` | boolean  | default `false`                                    |
+| `startedAt`        | date     | ISO 8601                                           |
+| `completedAt`      | date     | ISO 8601                                           |
 
 ### Responses
 

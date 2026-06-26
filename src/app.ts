@@ -23,6 +23,9 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://portfolio-dashboard-blue.vercel.app",
+      "https://ranokraihan.com",
+      "https://www.ranokraihan.com",
+      "https://dashboard.ranokraihan.com",
     ],
     credentials: true,
   })
